@@ -67,6 +67,8 @@ if(d.brief){
 }
 gpxFile.textContent=d.file;gpxOpen.href=`routes/${encodeURIComponent(d.file)}`;gpxDownload.href=`routes/${encodeURIComponent(d.file)}`;gpxDownload.download=d.file;daySelect.value=day;decisionWeather.hidden=d.decision!=='weather';decisionTime.hidden=d.decision!=='time';document.querySelectorAll('.daymap').forEach(x=>x.hidden=true);document.querySelector(`#map${day}`).hidden=false;initMap(day)}
 document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>setScreen(b.dataset.screen)));daySelect.addEventListener('change',e=>{setScreen('cockpit');renderDay(e.target.value)});document.querySelectorAll('[data-day]').forEach(b=>b.addEventListener('click',()=>{setScreen('cockpit');renderDay(b.dataset.day)}));document.querySelectorAll('.choice').forEach(c=>c.addEventListener('click',()=>{c.parentElement.querySelectorAll('.choice').forEach(x=>x.classList.remove('active'));c.classList.add('active')}));
+const OVERPASS_ENDPOINTS=["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter","https://overpass.nchc.org.tw/api/interpreter"];
+async function overpassQuery(q){let lastError=null;for(const endpoint of OVERPASS_ENDPOINTS){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),18000);try{const r=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body:"data="+encodeURIComponent(q),signal:controller.signal});clearTimeout(timer);if(!r.ok)throw new Error("HTTP "+r.status);return {data:await r.json(),endpoint};}catch(e){clearTimeout(timer);lastError=e}}throw lastError||new Error("Kein Overpass-Endpunkt erreichbar");}
 function havKm(a,b){const R=6371,la1=a[0]*Math.PI/180,la2=b[0]*Math.PI/180,dla=(b[0]-a[0])*Math.PI/180,dlo=(b[1]-a[1])*Math.PI/180;const h=Math.sin(dla/2)**2+Math.cos(la1)*Math.cos(la2)*Math.sin(dlo/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
 function minDistToRoute(lat,lon,pts){let best=Infinity;for(let i=0;i<pts.length;i+=Math.max(1,Math.floor(pts.length/180))){best=Math.min(best,havKm([lat,lon],pts[i]))}return best}
 function nauticalIcon(kind){return L.divIcon({className:'',html:`<div class="nauticalMarker ${kind==='lock'?'lock':''}">${kind==='lock'?'🔒':'🌉'}</div>`,iconSize:[26,26],iconAnchor:[13,13]})}
@@ -77,8 +79,7 @@ async function loadNauticalLayer(){
   try{
     const b=L.latLngBounds(pts).pad(.08),s=b.getSouth(),w=b.getWest(),n=b.getNorth(),e=b.getEast();
     const q=`[out:json][timeout:18];(node["waterway"="lock_gate"](${s},${w},${n},${e});way["waterway"="lock_gate"](${s},${w},${n},${e});node["lock"="yes"](${s},${w},${n},${e});way["lock"="yes"](${s},${w},${n},${e});node["bridge"](${s},${w},${n},${e});way["bridge"](${s},${w},${n},${e}););out center tags;`;
-    const r=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:'data='+encodeURIComponent(q)});
-    if(!r.ok)throw new Error('Overpass '+r.status);const j=await r.json(),group=L.layerGroup();let count=0;
+    const oq=await overpassQuery(q);const j=oq.data,group=L.layerGroup();let count=0;
     for(const el of j.elements){
       const lat=el.lat??el.center?.lat,lon=el.lon??el.center?.lon;if(lat==null||lon==null)continue;
       if(minDistToRoute(lat,lon,pts)>.28)continue;
@@ -87,7 +88,7 @@ async function loadNauticalLayer(){
       L.marker([lat,lon],{icon:nauticalIcon(kind),zIndexOffset:700}).bindPopup(`<strong>${esc(name)}</strong><br>${kind==='lock'?'Schleuse / Lock':'Brücke'}<br><small>OSM-Hinweis – Betriebs-/Öffnungszeit in Waterkaarten verifizieren.</small>`).addTo(group);count++;
     }
     group.addTo(m);nauticalLayers[currentDay]=group;nauticalStatus.textContent=`${count} OSM-Brücken/Schleusen nahe der GPX-Linie eingeblendet. Nicht als Ersatz für Waterkaarten verwenden.`;loadNautical.textContent='🌉 OSM-LAYER AUSBLENDEN';
-  }catch(e){nauticalStatus.textContent='Online-Abfrage gerade nicht verfügbar. Für Brücken/Schleusen bitte Waterkaarten verwenden.'}
+  }catch(e){nauticalStatus.textContent='OSM-Abfrage über alle verfügbaren Server fehlgeschlagen. Für Brücken/Schleusen bitte Waterkaarten verwenden.'}
   finally{loadNautical.disabled=false}
 }
 function locateMe(){
@@ -198,9 +199,7 @@ async function scanNauticalRoute(){
       node["seamark:type"="bridge"](${s},${w},${n},${e});
       way["seamark:type"="bridge"](${s},${w},${n},${e});
     );out center tags;`;
-    const r=await fetch("https://overpass-api.de/api/interpreter",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body:"data="+encodeURIComponent(q)});
-    if(!r.ok)throw new Error("Overpass "+r.status);
-    const j=await r.json(),objs=[],seen=new Set(),cum=cumulativeRouteKm(pts);
+    const oq=await overpassQuery(q);const j=oq.data,objs=[],seen=new Set(),cum=cumulativeRouteKm(pts);
     for(const el of j.elements){
       const lat=el.lat??el.center?.lat,lon=el.lon??el.center?.lon;if(lat==null||lon==null)continue;
       const near=nearestRouteIndex(lat,lon,pts);if(near.distance>.25)continue;
@@ -219,7 +218,7 @@ async function scanNauticalRoute(){
       :`<div class="placeholder">Keine OSM-Brücken-/Schleusenobjekte innerhalb ca. 250 m der GPX-Linie gefunden. Waterkaarten bleibt maßgeblich.</div>`;
     scanStatus.textContent=`Scan abgeschlossen. ${objs.length} Objekte sind jetzt in Fahrreihenfolge sortiert. Mit aktivem GPS wird das nächste vorausliegende Objekt hervorgehoben.`;
     updateNextNautic();
-  }catch(e){scanStatus.textContent="Online-Nautikscan momentan nicht erreichbar. Keine Auswirkung auf GPX/Karte; bitte Waterkaarten verwenden."}
+  }catch(e){scanStatus.textContent="Online-Nautikscan über keinen verfügbaren OSM-Server erreichbar. Bei lokalem file://-Start kann der Browser externe Abfragen blockieren; Waterkaarten bleibt maßgeblich."}
   finally{scanNautical.disabled=false}
 }
 

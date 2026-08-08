@@ -64,3 +64,42 @@
 @media(max-width:700px){.nextNautic{grid-template-columns:48px 1fr}.nextDistance{grid-column:2;text-align:left}}
 
 .propellerMark{overflow:hidden;background:#000!important;padding:0!important}.propellerMark img{width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit}
+
+.topbar{grid-template-columns:360px 1fr auto 56px}
+.versionBadge{padding:7px 10px;border-radius:999px;background:#e7f7f8;color:#087b8a;border:1px solid #bfe6e8;font-size:.72rem;font-weight:950}
+.topDayBar{grid-column:1/-1;background:#f8fcfc;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:9px 18px;position:sticky;top:90px;z-index:950}
+.topDayBar>span{font-size:.7rem;color:var(--muted);font-weight:950;letter-spacing:.08em}
+.topDayButtons{display:flex;gap:8px;overflow-x:auto}
+.topDayBtn{border:1px solid #c8e2e4;background:#fff;color:#0b405e;border-radius:999px;padding:8px 13px;font-weight:900;white-space:nowrap}
+.topDayBtn.active{background:linear-gradient(135deg,#087d96,#0aa5b7);color:#fff;border-color:#0aa5b7}
+.sidebar{top:137px;height:calc(100vh - 137px)}
+@media(max-width:1050px){.topDayBar{top:78px}.sidebar{top:125px}}
+@media(max-width:700px){.topDayBar{top:78px;padding:8px 10px}.topDayBar>span{display:none}.versionBadge{font-size:.64rem;padding:6px 8px}}
+
+/* V0.13.2 safe cleanup */
+.topDayBar{display:none!important}
+.daypicker{display:none!important}
+.sidebar{top:90px;height:calc(100vh - 90px)}
+.compatTopDay{display:none!important}
+.headerDayPicker{position:relative}
+.headerDayCurrent{border:0;background:transparent;text-align:left;padding:0;color:inherit;cursor:pointer;min-width:150px;max-width:205px}
+.headerDayCurrent small{display:block;color:var(--muted);font-size:.73rem;letter-spacing:.06em;text-transform:uppercase}
+.headerDayCurrent strong{display:block;color:#0b3155;font-size:1.02rem;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.headerDayMenu{position:absolute;left:10px;top:68px;width:300px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:7px;box-shadow:0 18px 45px rgba(10,45,65,.24);z-index:5000}
+.headerDayMenu button{width:100%;display:flex;justify-content:space-between;gap:14px;border:0;background:#fff;padding:10px 11px;border-radius:9px;color:#0b315b;font-weight:900;cursor:pointer}
+.headerDayMenu button span{color:#667d87;font-weight:650}
+.headerDayMenu button.active,.headerDayMenu button:hover{background:#eaf8f9;color:#087d96}
+@media(max-width:1050px){.sidebar{top:78px;height:calc(100vh - 78px)}.headerDayCurrent{min-width:130px;max-width:170px}.headerDayMenu{top:60px;left:4px}}
+@media(max-width:700px){.headerDayCurrent{min-width:118px;max-width:145px}.headerDayMenu{width:min(290px,85vw)}}
+
+/* V0.14 Wetter */
+.weatherStrip{display:grid;grid-template-columns:1.8fr repeat(4,.7fr) auto;gap:0;margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 9px 24px rgba(18,63,89,.07);overflow:hidden}
+.weatherNow{display:flex;align-items:center;gap:13px;padding:14px 16px}.weatherGlyph{font-size:2rem}.weatherNow small,.weatherStat small{display:block;color:var(--muted);font-size:.66rem;font-weight:900;letter-spacing:.07em}.weatherNow strong{display:block;color:#0b315b;margin-top:2px}.weatherNow span{display:block;color:#67808a;font-size:.72rem;margin-top:2px}
+.weatherStat{padding:14px 13px;border-left:1px solid var(--line);display:flex;flex-direction:column;justify-content:center}.weatherStat strong{color:#0b315b;margin-top:3px}
+.weatherRefresh{border:0;background:#0a8fa3;color:white;padding:0 16px;font-weight:950;letter-spacing:.03em}
+.weatherHero{display:grid;grid-template-columns:110px 1.3fr 1fr;align-items:center;gap:18px}.weatherHeroIcon{font-size:4.2rem;text-align:center}.weatherHeroText small{color:var(--muted);font-size:.7rem;font-weight:900;letter-spacing:.07em}.weatherHeroText h3{font-size:3rem;margin:3px 0;color:#0b315b}.weatherHeroText strong{display:block;font-size:1.1rem}.weatherHeroText span{display:block;color:var(--muted);font-size:.72rem;margin-top:6px}
+.weatherHeroRisk{border-left:1px solid var(--line);padding-left:18px}.weatherHeroRisk small{display:block;color:var(--muted);font-size:.68rem;font-weight:900}.weatherHeroRisk strong{display:block;color:#0b315b;font-size:1.1rem;margin:4px 0}.weatherHeroRisk span{display:block;color:#637984;font-size:.75rem;line-height:1.4}.weatherHeroRisk.ok strong{color:var(--green)}.weatherHeroRisk.attention strong{color:#9a7c00}.weatherHeroRisk.warning strong{color:var(--red)}
+.weatherGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}.weatherMetricGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.weatherMetricGrid>div{background:#f7fbfb;border:1px solid #e3efef;border-radius:11px;padding:10px}.weatherMetricGrid small{display:block;color:var(--muted);font-size:.67rem;text-transform:uppercase}.weatherMetricGrid strong{display:block;color:#0b315b;margin-top:3px}.weatherMetricGrid.marine{grid-template-columns:repeat(4,1fr);margin-top:14px}
+.hourlyForecast{display:grid;grid-template-columns:repeat(auto-fit,minmax(95px,1fr));gap:8px;margin-top:12px}.hourCard{border:1px solid var(--line);border-radius:11px;padding:9px;background:#fbfefe;text-align:center}.hourCard small{display:block;color:var(--muted)}.hourCard strong{display:block;color:#0b315b;margin:4px 0}.hourCard span{display:block;font-size:.72rem;color:#536c77}
+@media(max-width:1000px){.weatherStrip{grid-template-columns:1.5fr repeat(2,.7fr)}.weatherStat:nth-of-type(4),.weatherStat:nth-of-type(5){display:none}.weatherRefresh{grid-column:1/-1;padding:9px}.weatherGrid{grid-template-columns:1fr 1fr}.weatherGrid>.card:last-child{grid-column:1/-1}.weatherHero{grid-template-columns:90px 1fr}.weatherHeroRisk{grid-column:1/-1;border-left:0;border-top:1px solid var(--line);padding:13px 0 0}}
+@media(max-width:700px){.weatherStrip{grid-template-columns:1fr 1fr}.weatherNow{grid-column:1/-1}.weatherStat{border-left:0;border-top:1px solid var(--line)}.weatherGrid{grid-template-columns:1fr}.weatherGrid>.card:last-child{grid-column:auto}.weatherMetricGrid.marine{grid-template-columns:1fr 1fr}.weatherHero{grid-template-columns:65px 1fr}.weatherHeroIcon{font-size:3rem}}

@@ -1,4 +1,94 @@
 
+const WEATHER_CODES={
+  0:["☀️","Klar"],1:["🌤️","Überwiegend klar"],2:["⛅","Teilweise bewölkt"],3:["☁️","Bedeckt"],
+  45:["🌫️","Nebel"],48:["🌫️","Reifnebel"],51:["🌦️","Leichter Niesel"],53:["🌦️","Nieselregen"],55:["🌧️","Starker Niesel"],
+  61:["🌦️","Leichter Regen"],63:["🌧️","Regen"],65:["🌧️","Starker Regen"],80:["🌦️","Regenschauer"],81:["🌧️","Schauer"],82:["⛈️","Starke Schauer"],
+  95:["⛈️","Gewitter"],96:["⛈️","Gewitter mit Hagel"],99:["⛈️","Starkes Gewitter"]
+};
+let lastWeather=null;
+function routeWeatherPoint(day){
+  const d=FSC_ROUTES[String(day)],pts=d.points;
+  const p=pts[Math.floor(pts.length/2)];
+  return {lat:p[0],lon:p[1],label:d.title};
+}
+function beaufort(kmh){
+  const ms=kmh/3.6;
+  const limits=[0.3,1.6,3.4,5.5,8.0,10.8,13.9,17.2,20.8,24.5,28.5,32.7];
+  let b=0;while(b<limits.length&&ms>=limits[b])b++;return b;
+}
+function windDirText(deg){
+  if(deg==null)return "—";const dirs=["N","NO","O","SO","S","SW","W","NW"];return `${dirs[Math.round(deg/45)%8]} ${Math.round(deg)}°`;
+}
+function weatherRisk(w){
+  const gust=w.gust||0,rain=w.rain||0,vis=w.visibility||99999;
+  if(gust>=55 || vis<1500)return ["warning","ROT · kritisch prüfen"];
+  if(gust>=40 || rain>=4 || vis<4000)return ["attention","GELB · aufmerksam"];
+  return ["ok","GRÜN · unauffällig"];
+}
+async function fetchJson(url){
+  const c=new AbortController(),t=setTimeout(()=>c.abort(),15000);
+  try{const r=await fetch(url,{signal:c.signal});if(!r.ok)throw new Error("HTTP "+r.status);return await r.json();}finally{clearTimeout(t)}
+}
+async function loadWeather(){
+  const p=routeWeatherPoint(currentDay),d=FSC_ROUTES[String(currentDay)];
+  weatherSummary.textContent="Lädt …";weatherHeroDesc.textContent="Lädt …";
+  const startDate=d.date.match(/(\d{1,2})\.\s*(Aug|Sept)\.\s*2026/);
+  const month=startDate&&startDate[2]==="Sept"?"09":"08";
+  const dayNum=startDate?String(Number(startDate[1])).padStart(2,"0"):null;
+  const target=dayNum?`2026-${month}-${dayNum}`:null;
+  const today=new Date(),targetDate=target?new Date(target+"T12:00:00"):null;
+  const diffDays=targetDate?Math.ceil((targetDate-today)/86400000):0;
+  const forecastable=diffDays>=-1&&diffDays<=16;
+  const base=`https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&timezone=Europe%2FAmsterdam&current=temperature_2m,weather_code,wind_speed_10m,wind_gusts_10m,wind_direction_10m,precipitation,cloud_cover,visibility&hourly=temperature_2m,weather_code,wind_speed_10m,wind_gusts_10m,wind_direction_10m,precipitation_probability,precipitation,visibility,cloud_cover&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&forecast_days=16`;
+  try{
+    const wx=await fetchJson(base),cur=wx.current||{},code=WEATHER_CODES[cur.weather_code]||["🌦️","Wetter"];
+    const w={temp:cur.temperature_2m,wind:cur.wind_speed_10m,gust:cur.wind_gusts_10m,dir:cur.wind_direction_10m,rain:cur.precipitation,visibility:cur.visibility,cloud:cur.cloud_cover,code:cur.weather_code};
+    lastWeather=w;
+    weatherGlyph.textContent=code[0];weatherSummary.textContent=code[1];weatherLocation.textContent=d.title;
+    weatherTemp.textContent=w.temp!=null?`${Math.round(w.temp)} °C`:"—";weatherWind.textContent=w.wind!=null?`${Math.round(w.wind)} km/h`:"—";weatherGust.textContent=w.gust!=null?`${Math.round(w.gust)} km/h`:"—";weatherRain.textContent=w.rain!=null?`${w.rain.toFixed(1)} mm`:"—";
+    topWeather.textContent=w.temp!=null?`${code[0]} ${Math.round(w.temp)}°`:"—";topWind.textContent=w.wind!=null?`${Math.round(w.wind)} km/h`:"—";
+    weatherHeroIcon.textContent=code[0];weatherHeroTemp.textContent=w.temp!=null?`${Math.round(w.temp)} °C`:"—";weatherHeroDesc.textContent=code[1];weatherHeroPlace.textContent=d.title;
+    wxWind.textContent=w.wind!=null?`${Math.round(w.wind)} km/h`:"—";wxGust.textContent=w.gust!=null?`${Math.round(w.gust)} km/h`:"—";wxDir.textContent=windDirText(w.dir);wxBft.textContent=w.wind!=null?`${beaufort(w.wind)} Bft`:"—";
+    wxRain.textContent=w.rain!=null?`${w.rain.toFixed(1)} mm`:"—";wxVisibility.textContent=w.visibility!=null?`${(w.visibility/1000).toFixed(1)} km`:"—";wxCloud.textContent=w.cloud!=null?`${Math.round(w.cloud)} %`:"—";
+    const risk=weatherRisk(w);weatherRisk.className=`weatherHeroRisk ${risk[0]}`;weatherRisk.querySelector("strong").textContent=risk[1];
+    weatherUpdated.textContent=`Quelle: Open-Meteo · aktualisiert ${new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"})}`;
+    // Daily target if inside forecast horizon, else current-day daily values.
+    let di=0;
+    if(forecastable&&target&&wx.daily?.time){const found=wx.daily.time.indexOf(target);if(found>=0)di=found;}
+    wxMin.textContent=wx.daily?.temperature_2m_min?.[di]!=null?`${Math.round(wx.daily.temperature_2m_min[di])} °C`:"—";
+    wxMax.textContent=wx.daily?.temperature_2m_max?.[di]!=null?`${Math.round(wx.daily.temperature_2m_max[di])} °C`:"—";
+    wxSunrise.textContent=wx.daily?.sunrise?.[di]?wx.daily.sunrise[di].slice(11,16):"—";wxSunset.textContent=wx.daily?.sunset?.[di]?wx.daily.sunset[di].slice(11,16):"—";
+    // Hourly forecast: target day if available, otherwise next 6 daytime/current hours
+    let rows=[];
+    if(forecastable&&target&&wx.hourly?.time){
+      wx.hourly.time.forEach((t,i)=>{if(t.startsWith(target)&&Number(t.slice(11,13))>=8&&Number(t.slice(11,13))<=20&&Number(t.slice(11,13))%3===0)rows.push(i);});
+      forecastWindowNote.textContent=rows.length?`Prognose für ${target}.`:`Der Fahrtag liegt noch außerhalb des verfügbaren Prognosefensters. Aktuell werden Live-Werte angezeigt.`;
+    } else {
+      const nowIso=new Date().toISOString().slice(0,13);let start=wx.hourly?.time?.findIndex(t=>t>=nowIso);if(start<0)start=0;
+      rows=[start,start+2,start+4,start+6,start+8,start+10].filter(i=>i<wx.hourly.time.length);
+      forecastWindowNote.textContent=`Der gewählte Fahrtag liegt derzeit noch außerhalb des ca. 16-Tage-Prognosefensters. Die Karten zeigen echte Live-Werte am Routenmittelpunkt; die konkrete Tagesprognose erscheint automatisch näher am Reisetermin.`;
+    }
+    hourlyForecast.innerHTML=rows.map(i=>{const c=WEATHER_CODES[wx.hourly.weather_code[i]]||["🌦️",""];return `<div class="hourCard"><small>${wx.hourly.time[i].slice(11,16)}</small><strong>${c[0]} ${Math.round(wx.hourly.temperature_2m[i])}°</strong><span>💨 ${Math.round(wx.hourly.wind_speed_10m[i])} km/h</span><span>🌧 ${wx.hourly.precipitation_probability[i]}%</span></div>`}).join("");
+    wxRainProb.textContent=rows.length?`${Math.max(...rows.map(i=>wx.hourly.precipitation_probability[i]??0))} %`:"—";
+    ijsselmeerWeatherCard.hidden=currentDay!==2;
+    if(currentDay===2)await loadMarineWeather();
+  }catch(e){
+    weatherSummary.textContent="Online-Wetter nicht erreichbar";weatherHeroDesc.textContent="Wetterdaten konnten nicht geladen werden";
+    forecastWindowNote.textContent="Internetverbindung prüfen. Die übrige App bleibt nutzbar.";topWeather.textContent="—";topWind.textContent="—";
+  }
+}
+async function loadMarineWeather(){
+  try{
+    const url="https://marine-api.open-meteo.com/v1/marine?latitude=52.91&longitude=5.35&timezone=Europe%2FAmsterdam&current=wave_height,wave_direction,wave_period";
+    const m=await fetchJson(url),c=m.current||{};
+    wxWave.textContent=c.wave_height!=null?`${c.wave_height.toFixed(1)} m`:"—";wxWaveDir.textContent=c.wave_direction!=null?`${Math.round(c.wave_direction)}°`:"—";wxWavePeriod.textContent=c.wave_period!=null?`${c.wave_period.toFixed(1)} s`:"—";
+    let s="PRÜFEN";if(c.wave_height!=null){s=c.wave_height<0.4?"RUHIG":c.wave_height<0.8?"AUFMERKSAM":"KRITISCH PRÜFEN";}wxMarineStatus.textContent=s;
+  }catch(e){wxMarineStatus.textContent="Marine-Daten nicht erreichbar";}
+}
+
+document.querySelectorAll("[data-top-day]").forEach(b=>b.addEventListener("click",()=>{setScreen("cockpit");renderDay(Number(b.dataset.topDay));}));
+function syncTopDayButtons(day){document.querySelectorAll("[data-top-day]").forEach(b=>b.classList.toggle("active",Number(b.dataset.topDay)===Number(day)));}
+
 
 const ARTEMIS_PROFILE={
   name:"Artemis",type:"Aquanaut Andante 400 AC Pilothouse",
@@ -58,6 +148,7 @@ if(d.nautic){
   nautikOfficial.textContent=d.nautic.official||'';
 }
 if(typeof nautikRouteName!=='undefined')nautikRouteName.textContent=d.title;
+weatherLocation.textContent=d.title;if(typeof ijsselmeerWeatherCard!=='undefined')ijsselmeerWeatherCard.hidden=Number(day)!==2;
 if(typeof nextNauticCard!=='undefined')updateNextNautic();
 if(d.brief){
   briefCharacter.textContent=d.brief.character;
@@ -65,7 +156,7 @@ if(d.brief){
   briefReserve.textContent=d.brief.reserve;
   briefFocus.innerHTML=(d.brief.focus||[]).map(x=>`<span>${esc(x)}</span>`).join('');
 }
-gpxFile.textContent=d.file;gpxOpen.href=`routes/${encodeURIComponent(d.file)}`;gpxDownload.href=`routes/${encodeURIComponent(d.file)}`;gpxDownload.download=d.file;daySelect.value=day;decisionWeather.hidden=d.decision!=='weather';decisionTime.hidden=d.decision!=='time';document.querySelectorAll('.daymap').forEach(x=>x.hidden=true);document.querySelector(`#map${day}`).hidden=false;initMap(day)}
+gpxFile.textContent=d.file;gpxOpen.href=`routes/${encodeURIComponent(d.file)}`;gpxDownload.href=`routes/${encodeURIComponent(d.file)}`;gpxDownload.download=d.file;daySelect.value=day;syncTopDayButtons(day);syncHeaderDayPicker(day);decisionWeather.hidden=d.decision!=='weather';decisionTime.hidden=d.decision!=='time';document.querySelectorAll('.daymap').forEach(x=>x.hidden=true);document.querySelector(`#map${day}`).hidden=false;initMap(day)}
 document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>setScreen(b.dataset.screen)));daySelect.addEventListener('change',e=>{setScreen('cockpit');renderDay(e.target.value)});document.querySelectorAll('[data-day]').forEach(b=>b.addEventListener('click',()=>{setScreen('cockpit');renderDay(b.dataset.day)}));document.querySelectorAll('.choice').forEach(c=>c.addEventListener('click',()=>{c.parentElement.querySelectorAll('.choice').forEach(x=>x.classList.remove('active'));c.classList.add('active')}));
 const OVERPASS_ENDPOINTS=["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter","https://overpass.nchc.org.tw/api/interpreter"];
 async function overpassQuery(q){let lastError=null;for(const endpoint of OVERPASS_ENDPOINTS){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),18000);try{const r=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body:"data="+encodeURIComponent(q),signal:controller.signal});clearTimeout(timer);if(!r.ok)throw new Error("HTTP "+r.status);return {data:await r.json(),endpoint};}catch(e){clearTimeout(timer);lastError=e}}throw lastError||new Error("Kein Overpass-Endpunkt erreichbar");}
@@ -222,4 +313,20 @@ async function scanNauticalRoute(){
   finally{scanNautical.disabled=false}
 }
 
-window.addEventListener('load',()=>{renderDay(1);renderOverviews();const p=getShipProfile();setProfileInputs(p);renderShipProfile(p);saveShipProfile.addEventListener('click',()=>{saveProfile();renderNautikShip();});resetShipProfile.addEventListener('click',()=>{resetProfile();renderNautikShip();});renderNautikShip();scanNautical.addEventListener('click',scanNauticalRoute);});
+
+function syncHeaderDayPicker(day){
+  const labels={1:"Sneek",2:"Gaastmaar",3:"Workum",4:"SN15",5:"Marchjepolle",6:"Giethoorn",7:"Sloten"};
+  headerDayLabel.textContent=`Tag ${day} · ${labels[day]||""}`;
+  document.querySelectorAll("[data-header-day]").forEach(b=>b.classList.toggle("active",Number(b.dataset.headerDay)===Number(day)));
+}
+headerDayCurrent.addEventListener("click",(e)=>{e.stopPropagation();headerDayMenu.hidden=!headerDayMenu.hidden;});
+document.querySelectorAll("[data-header-day]").forEach(b=>b.addEventListener("click",()=>{
+  const day=Number(b.dataset.headerDay);
+  headerDayMenu.hidden=true;
+  setScreen("cockpit");
+  renderDay(day);
+}));
+document.addEventListener("click",(e)=>{if(!headerDayPicker.contains(e.target))headerDayMenu.hidden=true;});
+
+weatherRefresh.addEventListener("click",loadWeather);weatherRefreshFull.addEventListener("click",loadWeather);
+window.addEventListener('load',()=>{renderDay(1);renderOverviews();const p=getShipProfile();setProfileInputs(p);renderShipProfile(p);saveShipProfile.addEventListener('click',()=>{saveProfile();renderNautikShip();});resetShipProfile.addEventListener('click',()=>{resetProfile();renderNautikShip();});renderNautikShip();scanNautical.addEventListener('click',scanNauticalRoute);loadWeather();});

@@ -1,22 +1,22 @@
-# Friesland Skipper Cockpit V0.14 – Echter Wetterblock
+# Friesland Skipper Cockpit V0.14.1
 
-Masterbasis: V0.13.2. Alle bestehenden Funktionen bleiben erhalten; V0.14 ergänzt ausschließlich Wetter.
+Fehlerkorrektur auf Basis V0.14, weiterhin additiv zum Master V0.13.2.
 
-## Neu
-- echter Online-Wetterblock auf Basis von Open-Meteo
-- Live-Wetter am Routenmittelpunkt des ausgewählten Fahrtags
-- Temperatur, Wetterzustand, Wind, Böen, Windrichtung, ca. Beaufort
-- Niederschlag, Regenwahrscheinlichkeit, Sicht und Bewölkung
-- Tages-Min/Max sowie Sonnenauf- und -untergang
-- stündliche Prognose
-- Kopfzeile zeigt echtes Wetter und Wind
-- kompakter Wetterstreifen direkt im Cockpit
-- eigener Bereich „WETTER“
-- Tag 2: zusätzlicher IJsselmeer-Marine-Check mit Wellenhöhe, -richtung und -periode
-- einfache konservative Skipper-Ampel für Wind/Böen/Sicht
+## Korrigiert
+1. **Tagesauswahl auf GitHub Pages/iPad**
+   - eigene CSS/JS-Dateien werden jetzt mit Versionsparameter geladen (`?v=0.14.1`), damit Safari/GitHub keine ältere V0.13/V0.12-Datei aus dem Cache verwendet.
+   - alte Tagesleiste und Sidebar-Tageswahl werden zusätzlich über eine kleine kritische Inline-Regel ausgeblendet.
+   - Kopfzeilen-Tageswahl nutzt explizite DOM-Zugriffe für Safari.
 
-## Prognosefenster
-Die Reise liegt aktuell noch mehr als 16 Tage in der Zukunft. Daher zeigt die App bis zum Prognosefenster echte Live-Werte am jeweiligen Routenmittelpunkt. Sobald ein Fahrtag innerhalb des Open-Meteo-Prognosefensters liegt, wird automatisch die konkrete Tagesprognose dieses Datums angezeigt.
+2. **Open-Meteo Wetter**
+   - ein JavaScript-Namenskonflikt zwischen der Funktion `weatherRisk()` und dem DOM-Element `id="weatherRisk"` wurde behoben.
+   - dieser Fehler trat erst NACH erfolgreicher Wetterabfrage auf und wurde fälschlich als „Online-Wetter nicht erreichbar“ angezeigt.
+   - Wetter-Buttons sind jetzt explizit an ihre DOM-Elemente gebunden.
+   - Fehlermeldungen zeigen künftig den tatsächlichen Fehlertext an.
 
-## Wichtig
-Wetterdaten sind Zusatzinformationen. Waterkaarten, amtliche Warnungen und die Entscheidung des Skippers bleiben maßgeblich.
+3. **IJsselmeer-Seewetter**
+   - wird wieder ausgeführt, sobald der normale Wetterblock erfolgreich verarbeitet wurde.
+
+## Unverändert
+Alle Funktionen, Inhalte, sieben Original-GPX, Karten, GPS, Nautik, Schiffsprofil,
+Skipperbrief, Landgang, Nachtplätze und das Layout des Masters V0.13.2 bleiben erhalten.

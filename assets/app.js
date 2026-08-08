@@ -19,7 +19,7 @@ function beaufort(kmh){
 function windDirText(deg){
   if(deg==null)return "—";const dirs=["N","NO","O","SO","S","SW","W","NW"];return `${dirs[Math.round(deg/45)%8]} ${Math.round(deg)}°`;
 }
-function weatherRisk(w){
+function classifyWeatherRisk(w){
   const gust=w.gust||0,rain=w.rain||0,vis=w.visibility||99999;
   if(gust>=55 || vis<1500)return ["warning","ROT · kritisch prüfen"];
   if(gust>=40 || rain>=4 || vis<4000)return ["attention","GELB · aufmerksam"];
@@ -50,7 +50,10 @@ async function loadWeather(){
     weatherHeroIcon.textContent=code[0];weatherHeroTemp.textContent=w.temp!=null?`${Math.round(w.temp)} °C`:"—";weatherHeroDesc.textContent=code[1];weatherHeroPlace.textContent=d.title;
     wxWind.textContent=w.wind!=null?`${Math.round(w.wind)} km/h`:"—";wxGust.textContent=w.gust!=null?`${Math.round(w.gust)} km/h`:"—";wxDir.textContent=windDirText(w.dir);wxBft.textContent=w.wind!=null?`${beaufort(w.wind)} Bft`:"—";
     wxRain.textContent=w.rain!=null?`${w.rain.toFixed(1)} mm`:"—";wxVisibility.textContent=w.visibility!=null?`${(w.visibility/1000).toFixed(1)} km`:"—";wxCloud.textContent=w.cloud!=null?`${Math.round(w.cloud)} %`:"—";
-    const risk=weatherRisk(w);weatherRisk.className=`weatherHeroRisk ${risk[0]}`;weatherRisk.querySelector("strong").textContent=risk[1];
+    const risk=classifyWeatherRisk(w);
+    const riskEl=document.getElementById("weatherRisk");
+    riskEl.className=`weatherHeroRisk ${risk[0]}`;
+    riskEl.querySelector("strong").textContent=risk[1];
     weatherUpdated.textContent=`Quelle: Open-Meteo · aktualisiert ${new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"})}`;
     // Daily target if inside forecast horizon, else current-day daily values.
     let di=0;
@@ -73,8 +76,12 @@ async function loadWeather(){
     ijsselmeerWeatherCard.hidden=currentDay!==2;
     if(currentDay===2)await loadMarineWeather();
   }catch(e){
-    weatherSummary.textContent="Online-Wetter nicht erreichbar";weatherHeroDesc.textContent="Wetterdaten konnten nicht geladen werden";
-    forecastWindowNote.textContent="Internetverbindung prüfen. Die übrige App bleibt nutzbar.";topWeather.textContent="—";topWind.textContent="—";
+    console.error("Wetterfehler:",e);
+    weatherSummary.textContent="Wetterdaten konnten nicht geladen werden";
+    weatherHeroDesc.textContent="Wetterdaten konnten nicht geladen werden";
+    weatherUpdated.textContent=`Fehler: ${e && e.message ? e.message : "unbekannt"}`;
+    forecastWindowNote.textContent="Bitte Verbindung prüfen und erneut auf „Wetter laden“ tippen. Die übrige App bleibt nutzbar.";
+    topWeather.textContent="—";topWind.textContent="—";
   }
 }
 async function loadMarineWeather(){
@@ -319,14 +326,22 @@ function syncHeaderDayPicker(day){
   headerDayLabel.textContent=`Tag ${day} · ${labels[day]||""}`;
   document.querySelectorAll("[data-header-day]").forEach(b=>b.classList.toggle("active",Number(b.dataset.headerDay)===Number(day)));
 }
-headerDayCurrent.addEventListener("click",(e)=>{e.stopPropagation();headerDayMenu.hidden=!headerDayMenu.hidden;});
+document.getElementById("headerDayCurrent").addEventListener("click",(e)=>{
+  e.stopPropagation();
+  const menu=document.getElementById("headerDayMenu");
+  menu.hidden=!menu.hidden;
+});
 document.querySelectorAll("[data-header-day]").forEach(b=>b.addEventListener("click",()=>{
   const day=Number(b.dataset.headerDay);
   headerDayMenu.hidden=true;
   setScreen("cockpit");
   renderDay(day);
 }));
-document.addEventListener("click",(e)=>{if(!headerDayPicker.contains(e.target))headerDayMenu.hidden=true;});
+document.addEventListener("click",(e)=>{
+  const picker=document.getElementById("headerDayPicker"),menu=document.getElementById("headerDayMenu");
+  if(picker && !picker.contains(e.target))menu.hidden=true;
+});
 
-weatherRefresh.addEventListener("click",loadWeather);weatherRefreshFull.addEventListener("click",loadWeather);
+document.getElementById("weatherRefresh").addEventListener("click",loadWeather);
+document.getElementById("weatherRefreshFull").addEventListener("click",loadWeather);
 window.addEventListener('load',()=>{renderDay(1);renderOverviews();const p=getShipProfile();setProfileInputs(p);renderShipProfile(p);saveShipProfile.addEventListener('click',()=>{saveProfile();renderNautikShip();});resetShipProfile.addEventListener('click',()=>{resetProfile();renderNautikShip();});renderNautikShip();scanNautical.addEventListener('click',scanNauticalRoute);loadWeather();});

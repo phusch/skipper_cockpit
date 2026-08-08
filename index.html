@@ -1,0 +1,162 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b7285"><title>Friesland Skipper Cockpit V0.10</title><meta name="description" content="Friesland Skipper Cockpit – reale GPX-Routen, moderne maritime Cockpit-Oberfläche"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><link rel="stylesheet" href="assets/app.css"></head>
+<body><div class="shell"><header class="topbar"><div class="brand"><img src="assets/propeller-animated.gif" alt="Propeller"><div><h1>FRIESLAND</h1><span>SKIPPER COCKPIT</span></div></div><div class="statusbar"><div class="statusitem"><div class="statusicon">📅</div><div><small>Tag</small><strong id="topDay">1 / 7</strong></div></div><div class="statusitem"><div class="statusicon">🌤️</div><div><small>Wetter</small><strong>Live später</strong></div></div><div class="statusitem"><div class="statusicon">💨</div><div><small>Wind</small><strong>Live später</strong></div></div><div class="statusitem"><div class="statusicon">🕒</div><div><small>Fahrzeit</small><strong id="topTime">—</strong></div></div><div class="statusitem"><div class="statusicon">〰️</div><div><small>Distanz</small><strong id="topKm">—</strong></div></div></div><button class="menuBtn" aria-label="Menü">☰</button></header>
+<aside class="sidebar"><button class="navbtn active" data-screen="cockpit"><span class="ico">⌂</span>COCKPIT</button><button class="navbtn" data-screen="tagesplan"><span class="ico">▣</span>TAGESPLAN</button><button class="navbtn" data-screen="waterkaarten"><span class="ico">🗺️</span>WATERKAARTEN</button><button class="navbtn" data-screen="nautik"><span class="ico">🌉</span>NAUTIK</button><button class="navbtn" data-screen="landgang"><span class="ico">⚓</span>LANDGANG</button><button class="navbtn" data-screen="nacht"><span class="ico">🛏️</span>NACHTPLÄTZE</button><button class="navbtn" data-screen="settings"><span class="ico">⚙️</span>EINSTELLUNGEN</button><div class="daypicker"><label for="daySelect">Tag wählen</label><select id="daySelect"><option value="1">Tag 1 · Sneek</option>
+<option value="2">Tag 2 · Gaastmaar</option>
+<option value="3">Tag 3 · Workum</option>
+<option value="4">Tag 4 · SN15</option>
+<option value="5">Tag 5 · Marchjepolle</option>
+<option value="6">Tag 6 · Giethoorn</option>
+<option value="7">Tag 7 · Sloten</option></select></div></aside>
+<main class="content"><section class="screen active" id="screen-cockpit"><div class="headrow"><div><div class="kicker" id="dayKicker">TAG 1</div><h2 class="routeTitle" id="routeTitle">—</h2><p class="subtitle" id="subtitle">—</p></div><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"><span class="chip aqua">ORIGINAL-GPX AKTIV</span><span class="chip green">SKIPPER-EBENE V0.6</span></div></div>
+<div class="mapcard"><div class="mapLegend"><div><span class="line"></span> GPX-Fahrroute</div><div>➤ Fahrtrichtung</div><div>🚩 Start</div><div>🏁 Ziel</div><div>🏘️ Ort</div><div>⛵ See / Meer</div><div>🌬️ Windmühle</div></div><div id="map1" class="map daymap" ></div>
+<div id="map2" class="map daymap" hidden></div>
+<div id="map3" class="map daymap" hidden></div>
+<div id="map4" class="map daymap" hidden></div>
+<div id="map5" class="map daymap" hidden></div>
+<div id="map6" class="map daymap" hidden></div>
+<div id="map7" class="map daymap" hidden></div><div class="mapFoot"><span id="gpxFile">GPX</span><span>Realer Streckenverlauf · Kartenbasis OpenStreetMap</span></div></div>
+<div class="decision" id="decisionWeather" hidden><h3>⚠️ Tag 2 · Wetterentscheidung IJsselmeer</h3><p>Plan A nur bei passenden Bedingungen. Ist das IJsselmeer nicht sinnvoll fahrbar, bleibt ihr binnen und nutzt die vorbereitete Ausweichlogik.</p><div class="choiceRow"><button class="choice"><strong>PLAN A · IJSSELMEER</strong><span>Gaastmaar → Stavoren → Hindeloopen → Workum</span></button><button class="choice"><strong>PLAN B · BINNEN</strong><span>Geschützte Alternative – kein Zwang aufs IJsselmeer.</span></button></div></div>
+<div class="decision" id="decisionTime" hidden><h3>⏱️ Tag 3 · E‑Scooter-Zeitentscheidung</h3><p>Rechtzeitig zurück in Workum: Fahrt über IJlst und Sneek bis SN15. Bei später Rückkehr wird auf eine kürzere vorbereitete Variante gewechselt.</p><div class="choiceRow"><button class="choice active"><strong>RECHTZEITIG · SN15</strong><span>Workum → IJlst → Sneek → Sneekermeer → SN15</span></button><button class="choice"><strong>SPÄT · KURZVARIANTE</strong><span>Keine Hektik – Ziel flexibel verkürzen.</span></button></div></div>
+<div class="skipperBrief">
+  <div class="briefBadge" id="briefCharacter">TAGESBRIEF</div>
+  <div class="briefMain"><small>SKIPPERBRIEF · WAS KOMMT HEUTE AUF UNS ZU?</small><strong id="briefSummary">—</strong><div id="briefFocus" class="briefFocus"></div></div>
+  <div class="briefReserve"><small>RESERVE / TAKTIK</small><strong id="briefReserve">—</strong></div>
+</div>
+<div class="nautikToday">
+  <div class="nautikFlag" id="nautikFlag">NAUTIK</div>
+  <div class="nautikBody"><small>NAUTIK HEUTE</small><strong id="nautikTitle">—</strong><ul id="nautikItems"></ul></div>
+  <div class="nautikOfficial"><small>OFFIZIELLER KONTEXT</small><strong id="nautikOfficial">—</strong></div>
+</div>
+<div class="grid3"><article class="card"><h3>ROUTEN-DETAILS</h3><div class="metrics"><div class="metric"><small>Distanz</small><strong id="metricKm">—</strong></div><div class="metric"><small>Fahrzeit</small><strong id="metricTime">—</strong></div><div class="metric"><small>GPX-Punkte</small><strong id="metricPts">—</strong></div></div><ul class="highlightList"><li>🧭 <strong>Route:</strong> <span id="routeText">—</span></li><li>🌙 <strong>Nacht:</strong> <span id="nightText">—</span></li><li>🌊 <strong>Gewässer:</strong> <span id="watersText">—</span></li></ul></article>
+<article class="card"><h3>SKIPPER-HINWEISE</h3><div id="skipperPassages"></div><div class="liveLayer"><button id="loadNautical" class="miniBtn">🌉 OSM-BRÜCKEN / SCHLEUSEN LADEN</button><small id="nauticalStatus">Optionaler Online-Layer. Öffnungszeiten anschließend in Waterkaarten prüfen.</small></div></article>
+<article class="card"><h3>LANDGANG & ETAPPE</h3><ul class="hintList" id="landgangList"></ul><button id="gpsBtn" class="miniBtn secondary">📍 MEINE GPS-POSITION</button><small id="gpsStatus">Position wird nur lokal im Browser verwendet. In V0.10 wird sie zusätzlich für „Was kommt als Nächstes?“ genutzt.</small></article></div>
+<div class="actionbar"><a class="action aqua" id="gpxOpen" href="#">⌁ GPX ÖFFNEN</a><a class="action" id="gpxDownload" href="#" download>⇩ GPX SICHERN</a><a class="action primary" href="https://waterkaarten.app/" target="_blank" rel="noopener">◉ WATERKAARTEN</a><button class="action aqua" data-screen="tagesplan">▣ TAGESPLAN</button></div></section>
+<section class="screen" id="screen-tagesplan"><div class="headrow"><div><div class="kicker">TOUR 2026</div><h2 class="routeTitle">Tagesplan</h2><p class="subtitle">Die sieben realen GPX-Fahrtage als direkte Auswahl.</p></div></div><div class="grid3"><button class="card" data-day="1" style="text-align:left"><h3>TAG 1 · Mo., 31. Aug. 2026</h3><strong style="color:#0b315b">Sneek → Grutte Gaastmaar</strong><p>20.7 km · 2 h 35 min · Nacht: Grutte Gaastmaar</p></button><button class="card" data-day="2" style="text-align:left"><h3>TAG 2 · Di., 1. Sept. 2026</h3><strong style="color:#0b315b">Gaastmaar → Stavoren → Hindeloopen → Workum</strong><p>41.3 km · 5 h 00 min · Nacht: Workum</p></button><button class="card" data-day="3" style="text-align:left"><h3>TAG 3 · Mi., 2. Sept. 2026</h3><strong style="color:#0b315b">Workum → IJlst → Sneek → SN15</strong><p>34.3 km · 4 h 17 min · Nacht: SN15 Adam Lytse Grene</p></button><button class="card" data-day="4" style="text-align:left"><h3>TAG 4 · Do., 3. Sept. 2026</h3><strong style="color:#0b315b">SN15 → Tjeukemeer → Marchjepolle</strong><p>21.2 km · 2 h 20 min · Nacht: Marchjepolle TJ15i</p></button><button class="card" data-day="5" style="text-align:left"><h3>TAG 5 · Fr., 4. Sept. 2026</h3><strong style="color:#0b315b">Marchjepolle → Weerribben → Giethoorn</strong><p>40.7 km · 5 h 05 min · Nacht: Giethoorn · De Zuiderkluft</p></button><button class="card" data-day="6" style="text-align:left"><h3>TAG 6 · Sa., 5. Sept. 2026</h3><strong style="color:#0b315b">Giethoorn → Steenwijk → Sloten</strong><p>46.6 km · 5 h 50 min · Nacht: Sloten · Liegeover</p></button><button class="card" data-day="7" style="text-align:left"><h3>TAG 7 · So., 6. Sept. 2026</h3><strong style="color:#0b315b">Sloten → Woudsend → Heeg → SN38A</strong><p>21.5 km · 2 h 41 min · Nacht: SN38A Longschar</p></button></div></section>
+<section class="screen" id="screen-nautik">
+  <div class="headrow">
+    <div><div class="kicker">NAUTIK V0.9</div><h2 class="routeTitle">Nautik heute</h2>
+    <p class="subtitle">GPX-Route + aktives Schiffsprofil + nautische Zusatzdaten. Waterkaarten bleibt maßgeblich.</p></div>
+    <span class="chip yellow">LIVE PRÜFEN</span>
+  </div>
+  <div class="nautikDashboard">
+    <article class="card"><h3>AKTIVES SCHIFF</h3><div id="nautikShipFacts" class="shipFacts"></div>
+      <p class="mutedNote">Für die Passierbarkeitsbewertung werden Höhe, Tiefgang, Breite und Länge des aktuell gespeicherten Profils verwendet.</p></article>
+    <article class="card"><h3>BEWERTUNGSLOGIK</h3>
+      <div class="clearanceLegend">
+        <div><span class="clearanceDot ok"></span><strong>Grün</strong><small>bekannter Wert mit sinnvoller Reserve</small></div>
+        <div><span class="clearanceDot attention"></span><strong>Signalgelb</strong><small>geringe/fehlende Daten – prüfen</small></div>
+        <div><span class="clearanceDot stop"></span><strong>Rot</strong><small>bekannter Wert liegt unter dem Schiffsbedarf</small></div>
+      </div>
+      <p class="mutedNote">Unbekannte oder nicht eindeutig nautische OSM-Maße werden niemals automatisch als „passt“ gewertet.</p>
+    </article>
+    <article class="card"><h3>OFFIZIELLE QUELLEN 2026</h3>
+      <ul class="hintList"><li>🇳🇱 Fryslân: Brücken-/Schleusenbedienung 2026</li><li>🇳🇱 Overijssel: Noordwest-Overijssel Bedienzeiten</li><li>⚠️ Weerribben-Wieden: temporäre Sperrungen möglich</li></ul>
+      <div class="sourceBtns">
+        <a class="miniBtn linkBtn" href="https://www.fryslan.frl/brugbediening" target="_blank" rel="noopener">FRYSLÂN</a>
+        <a class="miniBtn linkBtn" href="https://www.overijssel.nl/onderwerpen/verkeer-en-vervoer/varen-in-overijssel/informatie-bedieningstijden-sluizen-en-bruggen-noordwest-overijssel" target="_blank" rel="noopener">OVERIJSSEL</a>
+      </div>
+    </article>
+  </div>
+  <div class="card nauticRouteCard">
+    <div class="nauticRouteHead"><div><small>AKTUELLER TAG</small><strong id="nautikRouteName">—</strong></div>
+      <button id="scanNautical" class="miniBtn">🌉 ROUTE NAUTISCH SCANNEN</button></div>
+    <div class="nextNautic cardLite" id="nextNauticCard">
+      <div class="nextIcon" id="nextNauticIcon">🧭</div>
+      <div class="nextText">
+        <small>WAS KOMMT ALS NÄCHSTES?</small>
+        <strong id="nextNauticName">Route noch nicht gescannt</strong>
+        <span id="nextNauticDetail">Nautik-Scan starten. Mit GPS kann anschließend das nächste Objekt vor dem Boot hervorgehoben werden.</span>
+      </div>
+      <div class="nextDistance">
+        <small>ENTFERNUNG</small>
+        <strong id="nextNauticDistance">—</strong>
+      </div>
+    </div>
+    <div id="scanSummary" class="scanSummary">
+      <div><small>GRÜN</small><strong id="scanGreen">0</strong></div>
+      <div><small>PRÜFEN</small><strong id="scanYellow">0</strong></div>
+      <div><small>ROT</small><strong id="scanRed">0</strong></div>
+      <div><small>OBJEKTE</small><strong id="scanTotal">0</strong></div>
+    </div>
+    <div id="nauticObjectList" class="nauticObjectList"><div class="placeholder">Noch kein Scan durchgeführt.</div></div>
+    <p class="mutedNote" id="scanStatus">Der Scan nutzt OpenStreetMap/Overpass als Zusatzquelle. Öffnungszeiten, Sperrungen, Wasserstände und endgültige Passierbarkeit bitte in Waterkaarten bzw. vor Ort prüfen.</p>
+  </div>
+</section>
+<section class="screen" id="screen-waterkaarten"><div class="headrow"><div><div class="kicker">NAVIGATION</div><h2 class="routeTitle">Waterkaarten</h2><p class="subtitle">Cockpit plant und informiert – Waterkaarten navigiert.</p></div></div><div class="card"><h3>GPX-Workflow</h3><p>Öffne am jeweiligen Fahrtag die Original-GPX über den Cockpit-Button und übergib sie auf dem iPad an Waterkaarten. Eine direkte proprietäre Schnittstelle wird hier nicht vorgetäuscht.</p><a class="action primary" href="https://waterkaarten.app/" target="_blank" rel="noopener">Waterkaarten öffnen</a></div></section>
+<section class="screen" id="screen-landgang"><div class="headrow"><div><div class="kicker">TOUR & LAND</div><h2 class="routeTitle">Landgang</h2><p class="subtitle">Tagesbezogene Stopps und Aktivitäten aus unserer festgelegten Route.</p></div></div><div id="landgangOverview" class="grid3"></div></section>
+<section class="screen" id="screen-nacht"><div class="headrow"><div><div class="kicker">LIEGEPLÄTZE</div><h2 class="routeTitle">Nachtplätze</h2><p class="subtitle">Geplante Nachtziele der Tour – Naturplätze bleiben bewusst im Vordergrund.</p></div></div><div id="nightOverview" class="grid3"></div></section>
+
+<section class="screen" id="screen-settings">
+  <div class="headrow">
+    <div>
+      <div class="kicker">SCHIFF & APP</div>
+      <h2 class="routeTitle">Schiffsprofil</h2>
+      <p class="subtitle">Das aktive Schiffsprofil wird lokal im Browser gespeichert und kann später für andere Boote geändert werden.</p>
+    </div>
+    <span class="chip green" id="profileStatusChip">ARTEMIS AKTIV</span>
+  </div>
+
+  <div class="shipProfileGrid">
+    <article class="shipHero card">
+      <img src="assets/artemis.webp" alt="Artemis – Aquanaut Andante 400 AC Pilothouse">
+      <div class="shipHeroText">
+        <small>AKTIVES SCHIFFSPROFIL</small>
+        <h3 id="shipHeroName">Artemis</h3>
+        <p id="shipHeroType">Aquanaut Andante 400 AC Pilothouse</p>
+      </div>
+    </article>
+
+    <article class="card">
+      <h3>GRUNDDATEN</h3>
+      <div class="profileForm">
+        <label>Schiffsname<input id="shipName" type="text" value="Artemis"></label>
+        <label>Bootstyp<input id="shipType" type="text" value="Aquanaut Andante 400 AC Pilothouse"></label>
+        <label>Gesamtlänge [m]<input id="shipLength" type="number" step="0.01" value="12.30"></label>
+        <label>Breite [m]<input id="shipBeam" type="number" step="0.01" value="3.85"></label>
+        <label>Tiefgang [m]<input id="shipDraft" type="number" step="0.01" value="1.15"></label>
+        <label>Höhe über Wasserlinie [m]<input id="shipAirDraft" type="number" step="0.01" value="4.15"></label>
+        <label>Kopffreiheit [m]<input id="shipHeadroom" type="number" step="0.01" value="2.00"></label>
+        <label>Liegeplätze<input id="shipBerths" type="number" step="1" value="6"></label>
+      </div>
+    </article>
+
+    <article class="card">
+      <h3>ANTRIEB & TANKS</h3>
+      <div class="profileForm">
+        <label>Motor<input id="shipEngine" type="text" value="Volvo D3 110 PK"></label>
+        <label>Verbrauch min. [l/h]<input id="shipFuelMin" type="number" step="0.1" value="6"></label>
+        <label>Verbrauch max. [l/h]<input id="shipFuelMax" type="number" step="0.1" value="8"></label>
+        <label>Kraftstofftank [l]<input id="shipFuelTank" type="number" step="1" value="500"></label>
+        <label>Trinkwassertank [l]<input id="shipWaterTank" type="number" step="1" value="500"></label>
+        <label>Fäkalientank [l]<input id="shipWasteTank" type="number" step="1" value="500"></label>
+      </div>
+    </article>
+  </div>
+
+  <div class="profileActions">
+    <button class="action primary" id="saveShipProfile">SCHIFFSPROFIL SPEICHERN</button>
+    <button class="action" id="resetShipProfile">AUF ARTEMIS ZURÜCKSETZEN</button>
+  </div>
+
+  <div class="grid3">
+    <article class="card">
+      <h3>NAUTISCHE PRÜFLOGIK</h3>
+      <p>Das Cockpit verwendet Länge, Breite, Tiefgang und Höhe als Grundlage für spätere Brücken-, Engstellen- und Tiefenbewertungen.</p>
+      <div class="clearanceLegend">
+        <div><span class="clearanceDot ok"></span><strong>Grün</strong><small>ausreichende Reserve</small></div>
+        <div><span class="clearanceDot attention"></span><strong>Signalgelb</strong><small>geringe Reserve / prüfen</small></div>
+        <div><span class="clearanceDot stop"></span><strong>Rot</strong><small>nicht passend / nicht befahren</small></div>
+      </div>
+    </article>
+    <article class="card">
+      <h3>AKTUELLE ARTEMIS-MAẞE</h3>
+      <div class="shipFacts" id="shipFacts"></div>
+    </article>
+    <article class="card">
+      <h3>WICHTIG</h3>
+      <p>Brückenhöhen, Wassertiefen und Sperrungen werden niemals allein aus statischen Daten als verbindlich behandelt. Aktuelle Werte müssen in Waterkaarten bzw. vor Ort geprüft werden.</p>
+      <span class="chip yellow">SKIPPER ENTSCHEIDET</span>
+    </article>
+  </div>
+</section></main></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="assets/routes-data.js"></script><script src="assets/app.js"></script></body></html>

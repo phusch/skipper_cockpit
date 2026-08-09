@@ -136,12 +136,21 @@ function resetProfile(){
 }
 
 let currentDay=1; const maps={}; const routeLayers={}; const nauticalLayers={}; let userMarker=null; let currentUserPos=null; const scannedNautic={};
-const ALT_ROUTE_STORAGE="fsc_alternative_routes_v1",ROUTE_CHOICE_STORAGE="fsc_route_choices_v1",ORIGINAL_INFO_STORAGE="fsc_original_route_info_v1";
+const ALT_ROUTE_STORAGE="fsc_alternative_routes_v1",ROUTE_CHOICE_STORAGE="fsc_route_choices_v1",ORIGINAL_INFO_STORAGE="fsc_original_route_info_v1",BUILTIN_INFO_DISABLED_STORAGE="fsc_builtin_route_info_disabled_v1";
 const ROUTE_PLAN_SPEED_KMH=8,basisWeatherCache={},basisLoading={};
 function readStoredObject(key){try{const value=JSON.parse(localStorage.getItem(key)||"{}");return value&&typeof value==="object"?value:{}}catch(e){return {}}}
-let alternativeRoutes=readStoredObject(ALT_ROUTE_STORAGE),routeChoices=readStoredObject(ROUTE_CHOICE_STORAGE),originalRouteInfos=readStoredObject(ORIGINAL_INFO_STORAGE),activeGpxUrl=null;
+let alternativeRoutes=readStoredObject(ALT_ROUTE_STORAGE),routeChoices=readStoredObject(ROUTE_CHOICE_STORAGE),originalRouteInfos=readStoredObject(ORIGINAL_INFO_STORAGE),builtInInfoDisabled=readStoredObject(BUILTIN_INFO_DISABLED_STORAGE),activeGpxUrl=null;
+function validInfoForRoute(info,day,base){return !!(info&&base&&info.routeFingerprint===routeFingerprint(day,base))}
+function builtInInfoForDay(day){
+  const route=(window.FSC_BUILTIN_TOUR_INFO?.routes||[]).find(item=>Number(item?.day)===Number(day));if(!route)return null;
+  return {day:Number(day),routeFingerprint:route.routeFingerprint,data:route.data||{},generatedAt:route.generatedAt||null,importedAt:null,sources:Array.isArray(route.sources)?route.sources:[],storageSource:"builtin"};
+}
+function effectiveOriginalRouteInfo(day){
+  const key=String(day),base=FSC_ROUTES[key],local=originalRouteInfos[key];if(validInfoForRoute(local,day,base))return {...local,storageSource:"local"};
+  if(builtInInfoDisabled[key])return null;const builtIn=builtInInfoForDay(day);return validInfoForRoute(builtIn,day,base)?builtIn:null;
+}
 function originalRouteWithInfo(day){
-  const key=String(day),base=FSC_ROUTES[key],info=originalRouteInfos[key];if(!base||!info||info.routeFingerprint!==routeFingerprint(day,base))return base;
+  const key=String(day),base=FSC_ROUTES[key],info=effectiveOriginalRouteInfo(day);if(!base||!info)return base;
   const data=info.data||{};return {...base,title:data.title||base.title,subtitle:data.subtitle||base.subtitle,route_text:data.routeText||base.route_text,night:data.night||base.night,waters:data.waters?.length?data.waters:base.waters,passages:data.passages?.length?data.passages:base.passages,landgang:data.landgang?.length?data.landgang:base.landgang,nautic:data.nautic?.title||data.nautic?.items?.length?data.nautic:base.nautic,brief:data.brief?.summary||data.brief?.focus?.length?data.brief:base.brief,originalRouteInfo:info};
 }
 function getActiveRoute(day){const key=String(day);return routeChoices[key]==="alternative"&&alternativeRoutes[key]?alternativeRoutes[key]:originalRouteWithInfo(day)}
@@ -252,7 +261,7 @@ function selectRoute(day,choice){
   try{saveRouteChoice(day,choice);clearRouteDependentState(day);renderDay(day);loadWeather()}catch(e){routeImportStatus.textContent="Auswahl konnte lokal nicht gespeichert werden."}
 }
 function xmlEsc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[m]))}
-function alternativeGpxText(d){return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Friesland Skipper Cockpit V0.17.1" xmlns="http://www.topografix.com/GPX/1/1"><trk><name>${xmlEsc(d.title)}</name><trkseg>${d.points.map(p=>`<trkpt lat="${p[0]}" lon="${p[1]}"></trkpt>`).join("")}</trkseg></trk></gpx>`}
+function alternativeGpxText(d){return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Friesland Skipper Cockpit V0.17.2" xmlns="http://www.topografix.com/GPX/1/1"><trk><name>${xmlEsc(d.title)}</name><trkseg>${d.points.map(p=>`<trkpt lat="${p[0]}" lon="${p[1]}"></trkpt>`).join("")}</trkseg></trk></gpx>`}
 function routeFingerprint(day,d){
   const step=Math.max(1,Math.floor(d.points.length/250));let hash=2166136261;
   for(let i=0;i<d.points.length;i+=step){const value=`${d.points[i][0].toFixed(5)},${d.points[i][1].toFixed(5)};`;for(let n=0;n<value.length;n++){hash^=value.charCodeAt(n);hash=Math.imul(hash,16777619)}}
@@ -266,7 +275,7 @@ function sampledRoutePoints(points,max=1000){
 }
 function buildRouteAnalysisPackage(day,d){
   const start=d.points[0],end=d.points[d.points.length-1],mid=d.points[Math.floor(d.points.length/2)],ship=getShipProfile();
-  return {schema:"fsc-route-analysis-v1",appVersion:"0.17.1",createdAt:new Date().toISOString(),day:Number(day),date:d.date,routeFingerprint:routeFingerprint(day,d),route:{file:d.file,gpxName:d.baseTitle||d.title,currentTitle:d.title,distanceKm:Number(d.km.toFixed(3)),pointCount:d.count,plannedTime:d.plan_time,start:{lat:start[0],lon:start[1],name:d.autoInfo?.startName||null},mid:{lat:mid[0],lon:mid[1]},end:{lat:end[0],lon:end[1],name:d.autoInfo?.endName||null},sampledPoints:sampledRoutePoints(d.points)},shipProfile:{name:ship.name,type:ship.type,lengthM:ship.length,beamM:ship.beam,draftM:ship.draft,airDraftM:ship.airDraft},requestedInformation:{title:"Präziser, kurzer Routentitel",subtitle:"Knackige Charakterisierung der Tagesetappe",routeText:"Nachvollziehbarer Verlauf über Orte und Gewässer",night:"Ziel- oder Nachtplatzhinweis",waters:"Liste der Gewässer und Kanäle in Fahrreihenfolge",passages:"Wichtige Passagen mit level info, attention oder warning",landgang:"Sinnvolle Stopps, Versorgung und Aktivitäten",nautic:"Nautische Zusammenfassung, Prüfpunkte und offizieller Kontext",brief:"Skipperbriefing mit Charakter, Zusammenfassung, Reserve und Fokusbegriffen",sources:"Verwendete Quellen als direkte URLs"},outputContract:{schema:"fsc-route-info-v1",routeFingerprint:routeFingerprint(day,d),day:Number(day),generatedAt:"ISO-8601",data:{title:"Text",subtitle:"Text",routeText:"Text",night:"Text",waters:["Text"],passages:[{level:"info|attention|warning",title:"Text",text:"Text"}],landgang:["Text"],nautic:{level:"info|attention|warning",title:"Text",items:["Text"],official:"Text"},brief:{character:"Text",summary:"Text",reserve:"Text",focus:["Text"]}},sources:["https://…"]},instructionsForChatGPT:"Analysiere ausschließlich diese Route. Recherchiere belastbare aktuelle Revierinformationen, wenn Internetzugriff vorhanden ist. Erfinde keine Brückenhöhen, Tiefen, Öffnungszeiten oder Sperrungen. Erstelle als Ergebnis ausschließlich eine herunterladbare JSON-Datei nach outputContract. routeFingerprint und day müssen exakt unverändert bleiben. Texte auf Deutsch; Waterkaarten und offizielle Hinweise bleiben maßgeblich."};
+  return {schema:"fsc-route-analysis-v1",appVersion:"0.17.2",createdAt:new Date().toISOString(),day:Number(day),date:d.date,routeFingerprint:routeFingerprint(day,d),route:{file:d.file,gpxName:d.baseTitle||d.title,currentTitle:d.title,distanceKm:Number(d.km.toFixed(3)),pointCount:d.count,plannedTime:d.plan_time,start:{lat:start[0],lon:start[1],name:d.autoInfo?.startName||null},mid:{lat:mid[0],lon:mid[1]},end:{lat:end[0],lon:end[1],name:d.autoInfo?.endName||null},sampledPoints:sampledRoutePoints(d.points)},shipProfile:{name:ship.name,type:ship.type,lengthM:ship.length,beamM:ship.beam,draftM:ship.draft,airDraftM:ship.airDraft},requestedInformation:{title:"Präziser, kurzer Routentitel",subtitle:"Knackige Charakterisierung der Tagesetappe",routeText:"Nachvollziehbarer Verlauf über Orte und Gewässer",night:"Ziel- oder Nachtplatzhinweis",waters:"Liste der Gewässer und Kanäle in Fahrreihenfolge",passages:"Wichtige Passagen mit level info, attention oder warning",landgang:"Sinnvolle Stopps, Versorgung und Aktivitäten",nautic:"Nautische Zusammenfassung, Prüfpunkte und offizieller Kontext",brief:"Skipperbriefing mit Charakter, Zusammenfassung, Reserve und Fokusbegriffen",sources:"Verwendete Quellen als direkte URLs"},outputContract:{schema:"fsc-route-info-v1",routeFingerprint:routeFingerprint(day,d),day:Number(day),generatedAt:"ISO-8601",data:{title:"Text",subtitle:"Text",routeText:"Text",night:"Text",waters:["Text"],passages:[{level:"info|attention|warning",title:"Text",text:"Text"}],landgang:["Text"],nautic:{level:"info|attention|warning",title:"Text",items:["Text"],official:"Text"},brief:{character:"Text",summary:"Text",reserve:"Text",focus:["Text"]}},sources:["https://…"]},instructionsForChatGPT:"Analysiere ausschließlich diese Route. Recherchiere belastbare aktuelle Revierinformationen, wenn Internetzugriff vorhanden ist. Erfinde keine Brückenhöhen, Tiefen, Öffnungszeiten oder Sperrungen. Erstelle als Ergebnis ausschließlich eine herunterladbare JSON-Datei nach outputContract. routeFingerprint und day müssen exakt unverändert bleiben. Texte auf Deutsch; Waterkaarten und offizielle Hinweise bleiben maßgeblich."};
 }
 function safeFilePart(value){return String(value||"Route").normalize("NFKD").replace(/[^a-zA-Z0-9_-]+/g,"_").replace(/^_+|_+$/g,"").slice(0,60)||"Route"}
 function downloadJson(data,fileName){
@@ -278,7 +287,7 @@ function exportActiveRouteAnalysis(){
 }
 function buildTourAnalysisPackage(){
   const createdAt=new Date().toISOString(),routes=[];for(let day=1;day<=7;day++){const analysis=buildRouteAnalysisPackage(day,FSC_ROUTES[String(day)]);analysis.requestedInformation.landgang="Konkrete Landgangtipps nahe sinnvoller Anlegeplätze: ungefährer Fußweg, Gastronomie und regionale Spezialitäten, Einkauf und Versorgung, Sehenswürdigkeiten, Museen, Mühlen, Spaziergänge sowie mögliche Aktivitäten; Öffnungszeiten nur mit Prüfhinweis";routes.push(analysis)}
-  return {schema:"fsc-tour-analysis-v1",appVersion:"0.17.1",createdAt,routeCount:routes.length,routes,outputContract:{schema:"fsc-tour-info-v1",generatedAt:"ISO-8601",routes:"Genau sieben fsc-route-info-v1-Pakete, eines je Fahrtag 1 bis 7"},instructionsForChatGPT:"Analysiere alle sieben Standardrouten als zusammenhängende Friesland-Tour. Recherchiere pro Fahrtag belastbare aktuelle Revier- und besonders konkrete Landganginformationen. Liefere genau eine herunterladbare JSON-Datei nach outputContract. Jeder day- und routeFingerprint-Wert muss exakt aus dem jeweiligen Analysepaket übernommen werden; die sieben Einzelpakete stehen im Feld routes. Keine Navigationswerte erfinden; Waterkaarten und amtliche Hinweise bleiben maßgeblich."};
+  return {schema:"fsc-tour-analysis-v1",appVersion:"0.17.2",createdAt,routeCount:routes.length,routes,outputContract:{schema:"fsc-tour-info-v1",generatedAt:"ISO-8601",routes:"Genau sieben fsc-route-info-v1-Pakete, eines je Fahrtag 1 bis 7"},instructionsForChatGPT:"Analysiere alle sieben Standardrouten als zusammenhängende Friesland-Tour. Recherchiere pro Fahrtag belastbare aktuelle Revier- und besonders konkrete Landganginformationen. Liefere genau eine herunterladbare JSON-Datei nach outputContract. Jeder day- und routeFingerprint-Wert muss exakt aus dem jeweiligen Analysepaket übernommen werden; die sieben Einzelpakete stehen im Feld routes. Keine Navigationswerte erfinden; Waterkaarten und amtliche Hinweise bleiben maßgeblich."};
 }
 function downloadTourAnalysisPackage(){
   downloadJson(buildTourAnalysisPackage(),"FSC_Tour_Analyse_Standardrouten.json");tourInfoStatus.className="routeInfoStatus";tourInfoStatus.textContent="Tour-Analysepaket mit allen sieben Standardrouten gesichert. Lade diese JSON-Datei jetzt hier im Chat hoch.";
@@ -307,14 +316,16 @@ function applyRouteInfoPackage(day,pkg){
   const updated={...base,title:data.title||base.title,subtitle:data.subtitle||base.subtitle,route_text:data.routeText||base.route_text,night:data.night||base.night,waters:data.waters.length?data.waters:base.waters,passages:data.passages.length?data.passages:base.passages,landgang:data.landgang.length?data.landgang:base.landgang,nautic:data.nautic.title||data.nautic.items.length?data.nautic:base.nautic,brief:data.brief.summary||data.brief.focus.length?data.brief:base.brief,routeInfo:{generatedAt:clean.generatedAt||null,importedAt:new Date().toISOString(),sources:clean.sources}};
   saveAlternative(day,updated);return updated;
 }
-function validOriginalInfoCount(){let count=0;for(let day=1;day<=7;day++){const info=originalRouteInfos[String(day)],base=FSC_ROUTES[String(day)];if(info&&base&&info.routeFingerprint===routeFingerprint(day,base))count++}return count}
+function validOriginalInfoCount(){let count=0;for(let day=1;day<=7;day++)if(effectiveOriginalRouteInfo(day))count++;return count}
+function validLocalOriginalInfoCount(){let count=0;for(let day=1;day<=7;day++)if(validInfoForRoute(originalRouteInfos[String(day)],day,FSC_ROUTES[String(day)]))count++;return count}
+function disabledBuiltInInfoCount(){let count=0;for(let day=1;day<=7;day++)if(builtInInfoDisabled[String(day)])count++;return count}
 function renderTourInfoManager(d){
   const count=validOriginalInfoCount(),current=d?.source!=="alternative"&&d?.originalRouteInfo;
-  removeOriginalRouteInfo.hidden=!current;removeAllOriginalRouteInfo.hidden=!count;
-  if(current){const sourceCount=current.sources?.length||0;tourInfoStatus.className="routeInfoStatus active";tourInfoStatus.textContent=`Standardrouten-Infos für Tag ${current.day} aktiv · ${count} von 7 Fahrtagen angereichert${sourceCount?` · ${sourceCount} Quellen für diesen Tag`:""}.`}
+  removeOriginalRouteInfo.hidden=!current;removeAllOriginalRouteInfo.hidden=!count;restoreBuiltInTourInfo.hidden=!disabledBuiltInInfoCount();
+  if(current){const sourceCount=current.sources?.length||0,source=current.storageSource==="local"?"lokale Aktualisierung":"dauerhaft integriert";removeOriginalRouteInfo.textContent=current.storageSource==="local"?"UPDATE ENTFERNEN":"ORIGINAL WIEDERHERSTELLEN";tourInfoStatus.className="routeInfoStatus active";tourInfoStatus.textContent=`Standardrouten-Infos für Tag ${current.day} aktiv · ${source} · ${count} von 7 Fahrtagen angereichert${sourceCount?` · ${sourceCount} Quellen für diesen Tag`:""}.`}
   else if(d?.source==="alternative"&&count){tourInfoStatus.className="routeInfoStatus";tourInfoStatus.textContent=`${count} von 7 Standardrouten angereichert. Aktuell ist die Waterkaarten-Alternative ausgewählt.`}
-  else if(count){tourInfoStatus.className="routeInfoStatus";tourInfoStatus.textContent=`${count} von 7 Standardrouten angereichert. Für den aktuellen Fahrtag sind noch die eingebauten Originalinformationen aktiv.`}
-  else{tourInfoStatus.className="routeInfoStatus";tourInfoStatus.textContent="Noch kein Tour-Routeninfopaket importiert. Die eingebauten Standardrouten bleiben unverändert verfügbar."}
+  else if(count){tourInfoStatus.className="routeInfoStatus";tourInfoStatus.textContent=`${count} von 7 Standardrouten angereichert. Für den aktuellen Fahrtag sind die unveränderten Originalinformationen aktiv.`}
+  else{tourInfoStatus.className="routeInfoStatus";tourInfoStatus.textContent="Die integrierten Tourinfos sind ausgeblendet. Alle sieben unveränderten Originalrouten sind aktiv."}
 }
 function sanitizeTourInfoPackage(pkg){
   if(!pkg||pkg.schema!=="fsc-tour-info-v1")throw new Error("Die Datei ist kein gültiges FSC-Tour-Routeninfopaket.");
@@ -323,6 +334,7 @@ function sanitizeTourInfoPackage(pkg){
   if(seen.size!==7)throw new Error("Das Tour-Paket enthält nicht alle Fahrtage 1 bis 7.");return next;
 }
 function saveOriginalRouteInfos(next){localStorage.setItem(ORIGINAL_INFO_STORAGE,JSON.stringify(next));originalRouteInfos=next}
+function saveBuiltInInfoDisabled(next){localStorage.setItem(BUILTIN_INFO_DISABLED_STORAGE,JSON.stringify(next));builtInInfoDisabled=next}
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
 function bearing(a,b){const lat1=a[0]*Math.PI/180,lat2=b[0]*Math.PI/180,dLon=(b[1]-a[1])*Math.PI/180;const y=Math.sin(dLon)*Math.cos(lat2),x=Math.cos(lat1)*Math.sin(lat2)-Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);return(Math.atan2(y,x)*180/Math.PI+360)%360}
 function arrowIcon(deg){return L.divIcon({className:'',html:`<div class="route-arrow" style="transform:rotate(${deg}deg)">➤</div>`,iconSize:[20,20],iconAnchor:[10,10]})}
@@ -558,18 +570,23 @@ tourInfoInput.addEventListener("change",async()=>{
   try{
     if(!/\.json$/i.test(file.name))throw new Error("Bitte das von ChatGPT erstellte JSON-Tourpaket auswählen.");
     if(file.size>5000000)throw new Error("Das Tour-Paket ist ungewöhnlich groß und wurde aus Sicherheitsgründen nicht importiert.");
-    if(validOriginalInfoCount()&&!confirm("Die bereits importierten Informationen der sieben Standardrouten ersetzen?"))return;
-    const next=sanitizeTourInfoPackage(JSON.parse(await file.text()));saveOriginalRouteInfos(next);renderDay(currentDay);tourInfoStatus.className="routeInfoStatus active";tourInfoStatus.textContent="Tour-Routeninfos für alle sieben Standardrouten erfolgreich importiert.";
+    if(validLocalOriginalInfoCount()&&!confirm("Die bereits importierte lokale Aktualisierung der sieben Standardrouten ersetzen?"))return;
+    const next=sanitizeTourInfoPackage(JSON.parse(await file.text()));saveOriginalRouteInfos(next);saveBuiltInInfoDisabled({});renderDay(currentDay);tourInfoStatus.className="routeInfoStatus active";tourInfoStatus.textContent="Lokale Tour-Aktualisierung für alle sieben Standardrouten erfolgreich importiert.";
   }catch(e){tourInfoStatus.className="routeInfoStatus error";tourInfoStatus.textContent=e&&e.message?e.message:"Das Tour-Routeninfopaket konnte nicht importiert werden."}
   finally{tourInfoInput.value=""}
 });
 removeOriginalRouteInfo.addEventListener("click",()=>{
-  const key=String(currentDay);if(!originalRouteInfos[key]||getActiveRoute(currentDay).source==="alternative")return;if(!confirm(`Importierte Routeninformationen für Tag ${currentDay} entfernen und die eingebauten Originalinformationen wiederherstellen?`))return;
-  try{const next={...originalRouteInfos};delete next[key];saveOriginalRouteInfos(next);renderDay(currentDay)}catch(e){tourInfoStatus.className="routeInfoStatus error";tourInfoStatus.textContent="Die Informationen für diesen Fahrtag konnten nicht entfernt werden."}
+  const key=String(currentDay),current=effectiveOriginalRouteInfo(currentDay);if(!current||getActiveRoute(currentDay).source==="alternative")return;
+  const local=current.storageSource==="local",question=local?`Lokale Aktualisierung für Tag ${currentDay} entfernen und auf die dauerhaft integrierten Tourinfos zurückgehen?`:`Integrierte Tourinfos für Tag ${currentDay} ausblenden und die unveränderten Originalinformationen anzeigen?`;if(!confirm(question))return;
+  try{if(local){const next={...originalRouteInfos},disabled={...builtInInfoDisabled};delete next[key];delete disabled[key];saveOriginalRouteInfos(next);saveBuiltInInfoDisabled(disabled)}else{saveBuiltInInfoDisabled({...builtInInfoDisabled,[key]:true})}renderDay(currentDay)}catch(e){tourInfoStatus.className="routeInfoStatus error";tourInfoStatus.textContent="Die Informationen für diesen Fahrtag konnten nicht zurückgesetzt werden."}
 });
 removeAllOriginalRouteInfo.addEventListener("click",()=>{
-  if(!validOriginalInfoCount()||!confirm("Alle importierten Informationen der Standardrouten entfernen und die eingebauten Originalinformationen wiederherstellen?"))return;
-  try{saveOriginalRouteInfos({});renderDay(currentDay)}catch(e){tourInfoStatus.className="routeInfoStatus error";tourInfoStatus.textContent="Die Tour-Routeninformationen konnten nicht entfernt werden."}
+  if(!validOriginalInfoCount()||!confirm("Alle lokalen und integrierten Tourinfos ausblenden und die sieben unveränderten Originalinformationen anzeigen?"))return;
+  try{saveOriginalRouteInfos({});saveBuiltInInfoDisabled({"1":true,"2":true,"3":true,"4":true,"5":true,"6":true,"7":true});renderDay(currentDay)}catch(e){tourInfoStatus.className="routeInfoStatus error";tourInfoStatus.textContent="Die Tour-Routeninformationen konnten nicht zurückgesetzt werden."}
+});
+restoreBuiltInTourInfo.addEventListener("click",()=>{
+  if(!disabledBuiltInInfoCount()||!confirm("Die dauerhaft integrierten Tourinfos für alle sieben Standardrouten wieder anzeigen? Lokale Aktualisierungen bleiben erhalten."))return;
+  try{saveBuiltInInfoDisabled({});renderDay(currentDay)}catch(e){tourInfoStatus.className="routeInfoStatus error";tourInfoStatus.textContent="Die integrierten Tourinfos konnten nicht wiederhergestellt werden."}
 });
 routeOriginalBtn.addEventListener("click",()=>selectRoute(currentDay,"original"));
 routeAlternativeBtn.addEventListener("click",()=>selectRoute(currentDay,"alternative"));

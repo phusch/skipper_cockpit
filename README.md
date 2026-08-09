@@ -1,4 +1,30 @@
-# Friesland Skipper Cockpit V0.17.1
+# Friesland Skipper Cockpit V0.17.2
+
+## Additive Erweiterung gegenüber der getesteten V0.17.1
+
+1. **Tour-Routeninfos dauerhaft integriert**
+   - Das geprüfte Informationspaket für alle sieben Standardrouten ist jetzt Bestandteil der App.
+   - Landgang, Gewässer, Passagen, Nautik und Skipperbriefing erscheinen auf iPad und MacBook ohne vorherigen Import.
+   - Die integrierten Informationen benötigen weder Supabase noch eine andere Cloudverbindung.
+
+2. **Dreistufige, rückbaubare Datenebene**
+   - Ein später importiertes Tour-Paket hat als lokale Aktualisierung Vorrang.
+   - Wird diese Aktualisierung entfernt, erscheinen wieder die dauerhaft integrierten Tourinfos.
+   - Werden auch die integrierten Infos ausgeblendet, erscheinen die unveränderten Originalinformationen aus `assets/routes-data.js`.
+   - „Tour-Infos wiederherstellen“ aktiviert die integrierte Ebene erneut.
+
+3. **Geräte- und Bestandsschutz**
+   - Die integrierten Informationen liegen in `assets/tour-info-data.js` und reisen mit jeder ZIP bzw. GitHub-Bereitstellung mit.
+   - Das Löschen lokaler Browserdaten entfernt höchstens lokale Updates und Ausblendungen; die integrierte Informationsebene erscheint danach automatisch wieder.
+   - Die sieben Original-GPX und `assets/routes-data.js` bleiben unverändert.
+
+## Bestandsschutz
+
+Alle Funktionen der getesteten V0.17.1 einschließlich Waterkaarten-Alternativen, Einzelanalyse, Tour-Analyse, JSON-Import, Wetter, Karten, GPS, Nautik und GPX-Download bleiben erhalten.
+
+---
+
+## Bisheriger Stand V0.17.1
 
 ## Additive Erweiterung gegenüber der getesteten V0.17.0
 

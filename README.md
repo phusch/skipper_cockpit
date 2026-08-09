@@ -1,4 +1,111 @@
-# Friesland Skipper Cockpit V0.14.1
+# Friesland Skipper Cockpit V0.17.1
+
+## Additive Erweiterung gegenüber der getesteten V0.17.0
+
+1. **Ein Analysepaket für alle sieben Standardrouten**
+   - „Tour-Analysepaket“ exportiert die sieben eingebauten Originalrouten gemeinsam als JSON.
+   - Enthalten sind ausschließlich Routengeometrie, Fahrtage, Planwerte und Schiffsprofil; die aktuelle GPS-Position wird nicht exportiert.
+   - Der Rechercheauftrag legt besonderen Wert auf konkrete Landgangtipps, Versorgung, Gastronomie, Sehenswürdigkeiten und Aktivitäten nahe sinnvoller Anlegeplätze.
+
+2. **Ein Tour-Routeninfopaket importieren**
+   - Ein gemeinsames `fsc-tour-info-v1`-Paket ergänzt alle sieben Standardrouten in einem Schritt.
+   - Alle sieben Fahrtage und GPX-Fingerabdrücke werden vollständig geprüft, bevor etwas gespeichert wird. Bei nur einem Fehler wird das gesamte Paket abgewiesen.
+   - Angereicherte Standardrouten verhalten sich in Karte, Wetter, GPS, Nautik, Tagesdetails und GPX-Download weiterhin wie normale Originalrouten.
+
+3. **Getrennte, lokale und rückbaubare Zusatzebene**
+   - Die importierten Texte liegen separat im lokalen Browserspeicher; `assets/routes-data.js` und alle Original-GPX bleiben unverändert.
+   - Informationen können je Fahrtag oder gemeinsam entfernt werden. Danach erscheinen sofort wieder die exakt eingebauten Originalinformationen.
+   - Der bestehende Einzelworkflow für Waterkaarten-Alternativrouten bleibt erhalten.
+
+## Bestandsschutz
+
+Alle Funktionen, Inhalte, Wetter-, Karten-, GPS-, Nautik-, GPX- und Alternativroutenfunktionen der getesteten V0.17.0 bleiben erhalten. Die Erweiterung betrifft ausschließlich eine zusätzliche lokale Informationsebene für Standardrouten.
+
+---
+
+## Bisheriger Stand V0.17.0
+
+## Additive Erweiterung gegenüber der getesteten V0.16.0
+
+1. **Analysepaket für ChatGPT**
+   - Die aktive Waterkaarten-Alternative kann als kompaktes JSON-Analysepaket gesichert werden.
+   - Enthalten sind Fahrtag, Datum, Route, Stichproben der GPX-Geometrie, automatische Basisdaten und das Schiffsprofil.
+   - Die aktuelle GPS-Position des Benutzers wird nicht exportiert.
+
+2. **Routeninformationspaket importieren**
+   - Von ChatGPT erstellte Informationen können als JSON wieder in die passende Alternativroute importiert werden.
+   - Übernommen werden Routentitel, Beschreibung, Ziel-/Nachtplatzhinweis, Gewässer, Passagen, Landgang, Nautik und Skipperbriefing.
+   - Fahrtag und ein Fingerabdruck der GPX müssen exakt passen; falsche Pakete werden abgewiesen.
+
+3. **Rückbaubar und lokal**
+   - Importierte Informationen werden ausschließlich lokal mit der Alternativroute gespeichert.
+   - Sie können separat entfernt werden, ohne GPX, automatische Basisdaten oder Originalroute zu verändern.
+   - Ein erneuter Import ersetzt bestehende Informationen nur nach Bestätigung.
+
+## Bestandsschutz
+
+Die GPX-Import-, Auswahl-, Wetter-, Karten-, GPS- und Nautikfunktionen der
+getesteten V0.16.0 bleiben erhalten. Alle sieben Original-GPX und
+`assets/routes-data.js` bleiben unverändert.
+
+---
+
+## Bisheriger Stand V0.16.0
+
+## Additive Erweiterung gegenüber der freigegebenen MASTER V0.15.2
+
+1. **Automatische Basisinformationen für importierte Alternativrouten**
+   - Start und Ziel werden aus den GPX-Koordinaten bestimmt.
+   - Ortsnamen werden einmalig über OpenStreetMap/Nominatim ermittelt und lokal mit der Alternative gespeichert.
+   - Distanz und Punktzahl stammen direkt aus der importierten GPX.
+   - Die Plan-Fahrzeit wird transparent mit 8 km/h und auf fünf Minuten gerundet berechnet.
+
+2. **Wetter entlang der Alternativroute**
+   - Wetter wird getrennt für Start, Routenmitte und Ziel geladen.
+   - Innerhalb des Prognosefensters wird der tatsächliche Fahrtag verwendet.
+   - Außerhalb des Prognosefensters werden eindeutig gekennzeichnete aktuelle Live-Werte angezeigt.
+   - Wind, Böen, Regen und eine Ampel-Risikoeinschätzung werden dargestellt.
+
+3. **Offline- und Bestandsschutz**
+   - Bei fehlendem Internet bleiben importierte GPX, gespeicherte Ortsdaten und Routenauswahl nutzbar; neue Karten-, Orts- und Wetterdaten benötigen Internet.
+   - Fehler externer Dienste werden sichtbar angezeigt und erzeugen keine erfundenen Werte.
+   - Die sieben Originalrouten und sämtliche Original-GPX bleiben unverändert.
+
+### Bestandsschutz V0.16.0
+
+Alle Funktionen, Inhalte, Karten, GPS, Nautik, Schiffsprofil, Skipperbriefing,
+Landgänge, Nachtplätze und das Layout der freigegebenen MASTER V0.15.2 bleiben
+erhalten. Die V0.16.0 erweitert ausschließlich importierte GPX-Alternativrouten.
+
+---
+
+## Bisheriger Stand V0.15.2
+
+## Additive Erweiterung gegenüber der freigegebenen MASTER V0.14.1
+
+1. **Eine Waterkaarten-GPX-Alternative pro Fahrtag**
+   - GPX-Datei über die lokale Dateiauswahl auf iPad/Mac importieren.
+   - Alternative wird ausschließlich lokal im Browser dem aktuellen Fahrtag zugeordnet.
+   - Originalroute und alle sieben Original-GPX-Dateien bleiben unverändert.
+
+2. **Freie Routenauswahl**
+   - Jeder Fahrtag kann zwischen Originalroute und gespeicherter Alternative wechseln.
+   - Die aktive Route wird auf Karte, bei Distanz, GPX-Download, Wetterpunkt, GPS-Abstand und Nautikscan verwendet.
+   - Die Alternative kann gelöscht werden; anschließend ist automatisch wieder die Originalroute aktiv.
+
+3. **Sichere erste Ausbaustufe**
+   - GPX-Name, Streckenverlauf, Punktzahl und Distanz werden beim Import übernommen bzw. berechnet.
+   - Weitere automatisch erzeugte Basisinformationen folgen bewusst in einem getrennten zweiten Schritt.
+
+### Bestandsschutz V0.15.2
+
+Alle Funktionen, Inhalte, sieben Original-GPX, Karten, GPS, Nautik, Schiffsprofil,
+Skipperbriefing, Landgänge, Nachtplätze und das bestehende Layout aus V0.14.1
+bleiben erhalten. Die neue Funktion ist additiv und lokal rückbaubar.
+
+---
+
+## Bisheriger Stand V0.14.1
 
 Fehlerkorrektur auf Basis V0.14, weiterhin additiv zum Master V0.13.2.
 

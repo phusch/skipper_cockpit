@@ -427,13 +427,14 @@ function renderDetailDayNav(targetId){
   el.querySelectorAll("[data-detail-day]").forEach(button=>button.addEventListener("click",()=>renderDay(Number(button.dataset.detailDay))));
 }
 function renderTagesplanDetail(){
-  const target=document.getElementById("tagesplanDetail");if(!target)return;const d=getActiveRoute(currentDay),brief=d.brief||{},passages=(d.passages||[]).map(passageParts);
+  const target=document.getElementById("tagesplanDetail");if(!target)return;const d=getActiveRoute(currentDay),brief=d.brief||{},passages=(d.passages||[]).map(passageParts),places=window.FSC_DAY_PLACE_LINKS?.entries?.[String(currentDay)]||[];
   target.innerHTML=`
     <article class="dayPlanHero">
       <div class="dayPlanCharacter">${esc(brief.character||"FAHRTAG")}</div>
       <div><small>TAG ${currentDay} · ${esc(d.date||"")}</small><h3>${esc(d.title)}</h3><p>${esc(d.subtitle||d.route_text||"")}</p></div>
       <div class="dayPlanMetrics"><div><small>DISTANZ</small><strong>${Number(d.km).toFixed(1)} km</strong></div><div><small>REINE FAHRZEIT</small><strong>${esc(d.plan_time||"—")}</strong></div></div>
     </article>
+    ${places.length?`<section class="dayPlaceLinks" aria-label="Ortsinformationen für Tag ${currentDay}"><div class="dayPlaceLinksHead"><div><small>ORTE AM HEUTIGEN FAHRTAG</small><h3>Weitere Informationen und Karten</h3></div><span>Links benötigen Internet</span></div><div class="dayPlaceLinkGrid">${places.map(place=>`<article><div><small>${esc(place.kind)}</small><strong>${esc(place.name)}</strong></div><div class="dayPlaceActions"><a href="${esc(place.info)}" target="_blank" rel="noopener">↗ ORT-INFO</a><a href="${esc(place.map)}" target="_blank" rel="noopener">📍 KARTE</a></div></article>`).join("")}</div></section>`:""}
     <div class="dayTimeline">
       <article class="timelineStep"><div class="timelineNo">1</div><div><small>VOR DEM ABLEGEN</small><h3>Tagesziel und Schwerpunkte</h3><p>${esc(brief.summary||d.route_text||"")}</p><div class="briefFocus">${(brief.focus||[]).map(x=>`<span>${esc(x)}</span>`).join("")}</div></div></article>
       <article class="timelineStep"><div class="timelineNo">2</div><div><small>FAHRTABSCHNITTE</small><h3>Gewässer in Fahrreihenfolge</h3><p>${esc(d.route_text||"")}</p><ol class="routeSequence">${(d.waters||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ol></div></article>

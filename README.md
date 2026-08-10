@@ -1,4 +1,23 @@
-# Friesland Skipper Cockpit V0.18.1
+# Friesland Skipper Cockpit V0.18.2
+
+## Orts- und Kartenlinks im Tagesplan
+
+1. **Links je Fahrtag**
+   - Der Tagesplan zeigt zu den jeweils relevanten Orten und Naturzielen eigene Schaltflächen für Ortsinformationen und Google Maps.
+   - Die Linkzuordnung liegt dauerhaft in `assets/day-place-links.js` und ist damit auf jedem Gerät Bestandteil der App.
+   - Die Tagesplantexte bleiben offline verfügbar; nur das Öffnen externer Orts- und Kartenlinks benötigt Internet.
+
+2. **Cockpit-Navigation bereinigt**
+   - Der bisher nicht verknüpfte Tagesplan-Button rechts unten im Cockpit wurde entfernt.
+   - Der Tagesplan bleibt unverändert über das Hauptmenü erreichbar.
+
+## Bestandsschutz
+
+V0.18.2 ergänzt ausschließlich die Tagesplan-Verlinkungen und bereinigt den redundanten Cockpit-Button. Sämtliche Funktionen und Daten der V0.18.1 – einschließlich Nachtplätze, Tagesplan, Landgang, Wetter, Nautik, Karte, GPX, Waterkaarten-Alternativen, Schiffsprofil, GPS und iPhone-Querformat – bleiben erhalten.
+
+---
+
+## Bisheriger Stand V0.18.1
 
 ## Nachtplätze mit Fotos und praktischen Informationen
 

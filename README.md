@@ -1,4 +1,29 @@
-# Friesland Skipper Cockpit V0.17.3
+# Friesland Skipper Cockpit V0.18.0
+
+## Tagesplan und Landgang ausführlich dargestellt
+
+1. **Reiter Tagesplan**
+   - Der ausgewählte Fahrtag wird als vollständiger Ablauf dargestellt: Tagesziel, Schwerpunkte, Gewässerfolge, wichtige Passagen, Landgänge, Nachtziel und Reservetaktik.
+   - Alle sieben Tage sind direkt im Reiter auswählbar.
+   - Die Anzeige verwendet die jeweils aktive Route und berücksichtigt damit auch eine ausgewählte Waterkaarten-Alternative mit importierten Routeninfos.
+
+2. **Reiter Landgang**
+   - Die bereits vorhandenen ausführlichen Landganginformationen werden als einzelne, gut lesbare Karten angezeigt.
+   - Die Karten werden in Stopp & Landgang, Erleben, Essen & Trinken, Versorgung und Reserve gegliedert.
+   - Nachtziel und Reservetaktik des gewählten Fahrtags bleiben direkt sichtbar.
+
+3. **Dauerhafte Speicherung**
+   - Die Informationen der sieben Standardrouten bleiben Bestandteil von `assets/tour-info-data.js` und werden nicht nur im Browserspeicher abgelegt.
+   - Sie sind nach einer Installation oder GitHub-Bereitstellung auf iPad, iPhone und MacBook vorhanden und funktionieren ohne Internet.
+   - Lokale Tour-Updates oder Alternativrouten können weiterhin darüberliegen. Nach dem Entfernen eines lokalen Updates erscheint wieder die dauerhaft integrierte Fassung.
+
+## Bestandsschutz
+
+V0.18.0 erweitert ausschließlich die Darstellung der vorhandenen Informationen. Alle Funktionen und Daten der freigegebenen MASTER V0.17.3 – einschließlich Wetter, Nautik, Karte, GPX, Waterkaarten-Alternativen, Schiffsprofil, GPS und iPhone-Querformat – bleiben erhalten.
+
+---
+
+## Bisheriger Stand V0.17.3
 
 ## Fehlerkorrekturen gegenüber der getesteten V0.17.2
 

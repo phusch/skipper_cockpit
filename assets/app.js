@@ -261,7 +261,7 @@ function selectRoute(day,choice){
   try{saveRouteChoice(day,choice);clearRouteDependentState(day);renderDay(day);loadWeather()}catch(e){routeImportStatus.textContent="Auswahl konnte lokal nicht gespeichert werden."}
 }
 function xmlEsc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[m]))}
-function alternativeGpxText(d){return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Friesland Skipper Cockpit V0.17.3" xmlns="http://www.topografix.com/GPX/1/1"><trk><name>${xmlEsc(d.title)}</name><trkseg>${d.points.map(p=>`<trkpt lat="${p[0]}" lon="${p[1]}"></trkpt>`).join("")}</trkseg></trk></gpx>`}
+function alternativeGpxText(d){return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Friesland Skipper Cockpit V0.18.0" xmlns="http://www.topografix.com/GPX/1/1"><trk><name>${xmlEsc(d.title)}</name><trkseg>${d.points.map(p=>`<trkpt lat="${p[0]}" lon="${p[1]}"></trkpt>`).join("")}</trkseg></trk></gpx>`}
 function routeFingerprint(day,d){
   const step=Math.max(1,Math.floor(d.points.length/250));let hash=2166136261;
   for(let i=0;i<d.points.length;i+=step){const value=`${d.points[i][0].toFixed(5)},${d.points[i][1].toFixed(5)};`;for(let n=0;n<value.length;n++){hash^=value.charCodeAt(n);hash=Math.imul(hash,16777619)}}
@@ -275,7 +275,7 @@ function sampledRoutePoints(points,max=1000){
 }
 function buildRouteAnalysisPackage(day,d){
   const start=d.points[0],end=d.points[d.points.length-1],mid=d.points[Math.floor(d.points.length/2)],ship=getShipProfile();
-  return {schema:"fsc-route-analysis-v1",appVersion:"0.17.3",createdAt:new Date().toISOString(),day:Number(day),date:d.date,routeFingerprint:routeFingerprint(day,d),route:{file:d.file,gpxName:d.baseTitle||d.title,currentTitle:d.title,distanceKm:Number(d.km.toFixed(3)),pointCount:d.count,plannedTime:d.plan_time,start:{lat:start[0],lon:start[1],name:d.autoInfo?.startName||null},mid:{lat:mid[0],lon:mid[1]},end:{lat:end[0],lon:end[1],name:d.autoInfo?.endName||null},sampledPoints:sampledRoutePoints(d.points)},shipProfile:{name:ship.name,type:ship.type,lengthM:ship.length,beamM:ship.beam,draftM:ship.draft,airDraftM:ship.airDraft},requestedInformation:{title:"Präziser, kurzer Routentitel",subtitle:"Knackige Charakterisierung der Tagesetappe",routeText:"Nachvollziehbarer Verlauf über Orte und Gewässer",night:"Ziel- oder Nachtplatzhinweis",waters:"Liste der Gewässer und Kanäle in Fahrreihenfolge",passages:"Wichtige Passagen mit level info, attention oder warning",landgang:"Sinnvolle Stopps, Versorgung und Aktivitäten",nautic:"Nautische Zusammenfassung, Prüfpunkte und offizieller Kontext",brief:"Skipperbriefing mit Charakter, Zusammenfassung, Reserve und Fokusbegriffen",sources:"Verwendete Quellen als direkte URLs"},outputContract:{schema:"fsc-route-info-v1",routeFingerprint:routeFingerprint(day,d),day:Number(day),generatedAt:"ISO-8601",data:{title:"Text",subtitle:"Text",routeText:"Text",night:"Text",waters:["Text"],passages:[{level:"info|attention|warning",title:"Text",text:"Text"}],landgang:["Text"],nautic:{level:"info|attention|warning",title:"Text",items:["Text"],official:"Text"},brief:{character:"Text",summary:"Text",reserve:"Text",focus:["Text"]}},sources:["https://…"]},instructionsForChatGPT:"Analysiere ausschließlich diese Route. Recherchiere belastbare aktuelle Revierinformationen, wenn Internetzugriff vorhanden ist. Erfinde keine Brückenhöhen, Tiefen, Öffnungszeiten oder Sperrungen. Erstelle als Ergebnis ausschließlich eine herunterladbare JSON-Datei nach outputContract. routeFingerprint und day müssen exakt unverändert bleiben. Texte auf Deutsch; Waterkaarten und offizielle Hinweise bleiben maßgeblich."};
+  return {schema:"fsc-route-analysis-v1",appVersion:"0.18.0",createdAt:new Date().toISOString(),day:Number(day),date:d.date,routeFingerprint:routeFingerprint(day,d),route:{file:d.file,gpxName:d.baseTitle||d.title,currentTitle:d.title,distanceKm:Number(d.km.toFixed(3)),pointCount:d.count,plannedTime:d.plan_time,start:{lat:start[0],lon:start[1],name:d.autoInfo?.startName||null},mid:{lat:mid[0],lon:mid[1]},end:{lat:end[0],lon:end[1],name:d.autoInfo?.endName||null},sampledPoints:sampledRoutePoints(d.points)},shipProfile:{name:ship.name,type:ship.type,lengthM:ship.length,beamM:ship.beam,draftM:ship.draft,airDraftM:ship.airDraft},requestedInformation:{title:"Präziser, kurzer Routentitel",subtitle:"Knackige Charakterisierung der Tagesetappe",routeText:"Nachvollziehbarer Verlauf über Orte und Gewässer",night:"Ziel- oder Nachtplatzhinweis",waters:"Liste der Gewässer und Kanäle in Fahrreihenfolge",passages:"Wichtige Passagen mit level info, attention oder warning",landgang:"Sinnvolle Stopps, Versorgung und Aktivitäten",nautic:"Nautische Zusammenfassung, Prüfpunkte und offizieller Kontext",brief:"Skipperbriefing mit Charakter, Zusammenfassung, Reserve und Fokusbegriffen",sources:"Verwendete Quellen als direkte URLs"},outputContract:{schema:"fsc-route-info-v1",routeFingerprint:routeFingerprint(day,d),day:Number(day),generatedAt:"ISO-8601",data:{title:"Text",subtitle:"Text",routeText:"Text",night:"Text",waters:["Text"],passages:[{level:"info|attention|warning",title:"Text",text:"Text"}],landgang:["Text"],nautic:{level:"info|attention|warning",title:"Text",items:["Text"],official:"Text"},brief:{character:"Text",summary:"Text",reserve:"Text",focus:["Text"]}},sources:["https://…"]},instructionsForChatGPT:"Analysiere ausschließlich diese Route. Recherchiere belastbare aktuelle Revierinformationen, wenn Internetzugriff vorhanden ist. Erfinde keine Brückenhöhen, Tiefen, Öffnungszeiten oder Sperrungen. Erstelle als Ergebnis ausschließlich eine herunterladbare JSON-Datei nach outputContract. routeFingerprint und day müssen exakt unverändert bleiben. Texte auf Deutsch; Waterkaarten und offizielle Hinweise bleiben maßgeblich."};
 }
 function safeFilePart(value){return String(value||"Route").normalize("NFKD").replace(/[^a-zA-Z0-9_-]+/g,"_").replace(/^_+|_+$/g,"").slice(0,60)||"Route"}
 function downloadJson(data,fileName){
@@ -287,7 +287,7 @@ function exportActiveRouteAnalysis(){
 }
 function buildTourAnalysisPackage(){
   const createdAt=new Date().toISOString(),routes=[];for(let day=1;day<=7;day++){const analysis=buildRouteAnalysisPackage(day,FSC_ROUTES[String(day)]);analysis.requestedInformation.landgang="Konkrete Landgangtipps nahe sinnvoller Anlegeplätze: ungefährer Fußweg, Gastronomie und regionale Spezialitäten, Einkauf und Versorgung, Sehenswürdigkeiten, Museen, Mühlen, Spaziergänge sowie mögliche Aktivitäten; Öffnungszeiten nur mit Prüfhinweis";routes.push(analysis)}
-  return {schema:"fsc-tour-analysis-v1",appVersion:"0.17.3",createdAt,routeCount:routes.length,routes,outputContract:{schema:"fsc-tour-info-v1",generatedAt:"ISO-8601",routes:"Genau sieben fsc-route-info-v1-Pakete, eines je Fahrtag 1 bis 7"},instructionsForChatGPT:"Analysiere alle sieben Standardrouten als zusammenhängende Friesland-Tour. Recherchiere pro Fahrtag belastbare aktuelle Revier- und besonders konkrete Landganginformationen. Liefere genau eine herunterladbare JSON-Datei nach outputContract. Jeder day- und routeFingerprint-Wert muss exakt aus dem jeweiligen Analysepaket übernommen werden; die sieben Einzelpakete stehen im Feld routes. Keine Navigationswerte erfinden; Waterkaarten und amtliche Hinweise bleiben maßgeblich."};
+  return {schema:"fsc-tour-analysis-v1",appVersion:"0.18.0",createdAt,routeCount:routes.length,routes,outputContract:{schema:"fsc-tour-info-v1",generatedAt:"ISO-8601",routes:"Genau sieben fsc-route-info-v1-Pakete, eines je Fahrtag 1 bis 7"},instructionsForChatGPT:"Analysiere alle sieben Standardrouten als zusammenhängende Friesland-Tour. Recherchiere pro Fahrtag belastbare aktuelle Revier- und besonders konkrete Landganginformationen. Liefere genau eine herunterladbare JSON-Datei nach outputContract. Jeder day- und routeFingerprint-Wert muss exakt aus dem jeweiligen Analysepaket übernommen werden; die sieben Einzelpakete stehen im Feld routes. Keine Navigationswerte erfinden; Waterkaarten und amtliche Hinweise bleiben maßgeblich."};
 }
 function downloadTourAnalysisPackage(){
   downloadJson(buildTourAnalysisPackage(),"FSC_Tour_Analyse_Standardrouten.json");tourInfoStatus.className="routeInfoStatus";tourInfoStatus.textContent="Tour-Analysepaket mit allen sieben Standardrouten gesichert. Lade diese JSON-Datei jetzt hier im Chat hoch.";
@@ -346,7 +346,7 @@ function initMap(day){
   if(routeLayers[day])m.removeLayer(routeLayers[day]);const group=L.layerGroup();routeLayers[day]=group;
   L.polyline(pts,{color:'#fff',weight:10,opacity:.95}).addTo(group);L.polyline(pts,{color:d.source==="alternative"?'#d99b00':'#078ca2',weight:6,opacity:1}).addTo(group);addDirectionArrows(group,pts);L.marker(pts[0],{icon:waypointIcon('start','Start'),zIndexOffset:1000}).addTo(group);L.marker(pts[pts.length-1],{icon:waypointIcon('finish','Ziel'),zIndexOffset:1000}).addTo(group);(d.landmarks||[]).forEach(w=>L.marker([w[2],w[3]],{icon:waypointIcon(w[0],w[1]),zIndexOffset:900}).addTo(group));group.addTo(m);m.fitBounds(L.latLngBounds(pts),{padding:[60,60]});setTimeout(()=>m.invalidateSize(),40)
 }
-function setScreen(name){document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.screen===name));document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===`screen-${name}`));if(name==='cockpit')setTimeout(()=>initMap(currentDay),40)}
+function setScreen(name){document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.screen===name));document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===`screen-${name}`));if(name==='cockpit')setTimeout(()=>initMap(currentDay),40);if(name==='tagesplan'||name==='landgang')renderDetailScreens()}
 function passageParts(p){
   if(Array.isArray(p))return {level:p[0]||'info',title:p[1]||'',text:p[2]||''};
   if(p&&typeof p==='object')return {level:p.level||'info',title:p.title||'',text:p.text||''};
@@ -371,7 +371,7 @@ if(d.brief){
   briefReserve.textContent=d.brief.reserve;
   briefFocus.innerHTML=(d.brief.focus||[]).map(x=>`<span>${esc(x)}</span>`).join('');
 }
-if(activeGpxUrl){URL.revokeObjectURL(activeGpxUrl);activeGpxUrl=null}gpxFile.textContent=d.file;if(d.source==="alternative"){activeGpxUrl=URL.createObjectURL(new Blob([alternativeGpxText(d)],{type:"application/gpx+xml"}));gpxOpen.href=activeGpxUrl;gpxDownload.href=activeGpxUrl}else{gpxOpen.href=`routes/${encodeURIComponent(d.file)}`;gpxDownload.href=`routes/${encodeURIComponent(d.file)}`}gpxDownload.download=d.file;daySelect.value=day;syncTopDayButtons(day);syncHeaderDayPicker(day);decisionWeather.hidden=d.decision!=='weather';decisionTime.hidden=d.decision!=='time';document.querySelectorAll('.daymap').forEach(x=>x.hidden=true);document.querySelector(`#map${day}`).hidden=false;initMap(day);if(d.source==="alternative"){const cached=basisWeatherCache[alternativeCacheKey(day,d)];if(!cached||Date.now()-cached.time>600000)setTimeout(()=>updateAlternativeBasis(day),0)}}
+if(activeGpxUrl){URL.revokeObjectURL(activeGpxUrl);activeGpxUrl=null}gpxFile.textContent=d.file;if(d.source==="alternative"){activeGpxUrl=URL.createObjectURL(new Blob([alternativeGpxText(d)],{type:"application/gpx+xml"}));gpxOpen.href=activeGpxUrl;gpxDownload.href=activeGpxUrl}else{gpxOpen.href=`routes/${encodeURIComponent(d.file)}`;gpxDownload.href=`routes/${encodeURIComponent(d.file)}`}gpxDownload.download=d.file;daySelect.value=day;syncTopDayButtons(day);syncHeaderDayPicker(day);decisionWeather.hidden=d.decision!=='weather';decisionTime.hidden=d.decision!=='time';document.querySelectorAll('.daymap').forEach(x=>x.hidden=true);document.querySelector(`#map${day}`).hidden=false;initMap(day);renderDetailScreens();if(d.source==="alternative"){const cached=basisWeatherCache[alternativeCacheKey(day,d)];if(!cached||Date.now()-cached.time>600000)setTimeout(()=>updateAlternativeBasis(day),0)}}
 document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>setScreen(b.dataset.screen)));daySelect.addEventListener('change',e=>{setScreen('cockpit');renderDay(e.target.value)});document.querySelectorAll('[data-day]').forEach(b=>b.addEventListener('click',()=>{setScreen('cockpit');renderDay(b.dataset.day)}));document.querySelectorAll('.choice').forEach(c=>c.addEventListener('click',()=>{c.parentElement.querySelectorAll('.choice').forEach(x=>x.classList.remove('active'));c.classList.add('active')}));
 const OVERPASS_ENDPOINTS=["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter","https://overpass.nchc.org.tw/api/interpreter"];
 async function overpassQuery(q){let lastError=null;for(const endpoint of OVERPASS_ENDPOINTS){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),18000);try{const r=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body:"data="+encodeURIComponent(q),signal:controller.signal});clearTimeout(timer);if(!r.ok)throw new Error("HTTP "+r.status);return {data:await r.json(),endpoint};}catch(e){clearTimeout(timer);lastError=e}}throw lastError||new Error("Kein Overpass-Endpunkt erreichbar");}
@@ -408,9 +408,54 @@ function locateMe(){
     m.panTo([lat,lon]);const off=minDistToRoute(lat,lon,pts);gpsStatus.textContent=`GPS aktiv · Abstand zur geplanten GPX-Linie ca. ${Math.round(off*1000)} m`;updateNextNautic();
   },()=>gpsStatus.textContent='GPS-Position konnte nicht gelesen werden. iPad-Berechtigung prüfen.',{enableHighAccuracy:true,timeout:10000});
 }
+function landgangCategory(text){
+  const value=String(text||"").toLowerCase();
+  if(/reserve|bei schlechtem|bei verzöger/.test(value))return {label:"RESERVE",icon:"↩",kind:"reserve"};
+  if(/einkauf|versorgung|vorrät|proviant|lebensmittel|müll|bordvorr/.test(value))return {label:"VERSORGUNG",icon:"🛒",kind:"supply"};
+  if(/essen|restaurant|café|kaffee|bier|terrasse|lunch|frühstück|brotzeit|küchen|pfannkuchen|gastronomie|kochen/.test(value))return {label:"ESSEN & TRINKEN",icon:"🍽️",kind:"food"};
+  if(/aktivität|e-bike|e-chopper|spaziergang|rundgang|museum|mühle|kultur|brunnen|waterpoort|stadtbummel|vogel|aussicht|besichtigung/.test(value))return {label:"ERLEBEN",icon:"◎",kind:"activity"};
+  return {label:"STOPP & LANDGANG",icon:"⚓",kind:"stop"};
+}
+function landgangParts(text,index){
+  const raw=String(text||"").trim(),split=raw.indexOf(":");
+  if(split>0&&split<80)return {title:raw.slice(0,split).trim(),text:raw.slice(split+1).trim(),...landgangCategory(raw)};
+  return {title:`Hinweis ${index+1}`,text:raw,...landgangCategory(raw)};
+}
+function renderDetailDayNav(targetId){
+  const el=document.getElementById(targetId);if(!el)return;
+  el.innerHTML=Array.from({length:7},(_,i)=>{const day=i+1,d=getActiveRoute(day);return `<button type="button" data-detail-day="${day}" class="${day===currentDay?'active':''}"><strong>TAG ${day}</strong><span>${esc(d.title)}</span></button>`}).join("");
+  el.querySelectorAll("[data-detail-day]").forEach(button=>button.addEventListener("click",()=>renderDay(Number(button.dataset.detailDay))));
+}
+function renderTagesplanDetail(){
+  const target=document.getElementById("tagesplanDetail");if(!target)return;const d=getActiveRoute(currentDay),brief=d.brief||{},passages=(d.passages||[]).map(passageParts);
+  target.innerHTML=`
+    <article class="dayPlanHero">
+      <div class="dayPlanCharacter">${esc(brief.character||"FAHRTAG")}</div>
+      <div><small>TAG ${currentDay} · ${esc(d.date||"")}</small><h3>${esc(d.title)}</h3><p>${esc(d.subtitle||d.route_text||"")}</p></div>
+      <div class="dayPlanMetrics"><div><small>DISTANZ</small><strong>${Number(d.km).toFixed(1)} km</strong></div><div><small>REINE FAHRZEIT</small><strong>${esc(d.plan_time||"—")}</strong></div></div>
+    </article>
+    <div class="dayTimeline">
+      <article class="timelineStep"><div class="timelineNo">1</div><div><small>VOR DEM ABLEGEN</small><h3>Tagesziel und Schwerpunkte</h3><p>${esc(brief.summary||d.route_text||"")}</p><div class="briefFocus">${(brief.focus||[]).map(x=>`<span>${esc(x)}</span>`).join("")}</div></div></article>
+      <article class="timelineStep"><div class="timelineNo">2</div><div><small>FAHRTABSCHNITTE</small><h3>Gewässer in Fahrreihenfolge</h3><p>${esc(d.route_text||"")}</p><ol class="routeSequence">${(d.waters||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ol></div></article>
+      <article class="timelineStep"><div class="timelineNo">3</div><div><small>UNTERWEGS</small><h3>Wichtige Passagen und Entscheidungen</h3><div class="timelinePassages">${passages.map(item=>`<div class="passage ${esc(item.level)}"><strong>${esc(item.title)}</strong>${esc(item.text)}</div>`).join("")}</div></div></article>
+      <article class="timelineStep"><div class="timelineNo">4</div><div><small>PAUSEN & LANDGANG</small><h3>Sinnvolle Stopps des Tages</h3><ul class="hintList">${(d.landgang||[]).map(x=>`<li>⚓ ${esc(x)}</li>`).join("")}</ul></div></article>
+      <article class="timelineStep arrival"><div class="timelineNo">5</div><div><small>ANKUNFT & NACHT</small><h3>Geplanter Tagesabschluss</h3><p>${esc(d.night||"Nachtplatz vor Ort prüfen.")}</p></div></article>
+      <article class="timelineStep reserve"><div class="timelineNo">R</div><div><small>RESERVE / TAKTIK</small><h3>Wenn Wetter, Brücken oder Zeit nicht mitspielen</h3><p>${esc(brief.reserve||"Rechtzeitig einen geeigneten Reserveplatz wählen und keine späte Aufholfahrt erzwingen.")}</p></div></article>
+    </div>
+    <p class="persistentInfoNote">Diese Tagesinformationen stammen aus der fest integrierten App-Datenbasis. Ein geprüftes lokales Tour-Update kann sie ergänzen; nach dem Löschen von Browserdaten steht die integrierte Fassung weiterhin zur Verfügung.</p>`;
+}
+function renderLandgangDetail(){
+  const target=document.getElementById("landgangOverview");if(!target)return;const d=getActiveRoute(currentDay),brief=d.brief||{},items=(d.landgang||[]).map(landgangParts);
+  target.innerHTML=`
+    <article class="landgangHero card"><div><small>TAG ${currentDay} · ${esc(d.date||"")}</small><h3>${esc(d.title)}</h3><p>${esc(d.subtitle||"")}</p></div><div><small>NACHTZIEL</small><strong>${esc(d.night||"—")}</strong></div></article>
+    <div class="landgangCards">${items.map(item=>`<article class="landgangCard ${item.kind}"><div class="landgangCardHead"><span>${item.icon}</span><small>${item.label}</small></div><h3>${esc(item.title)}</h3><p>${esc(item.text)}</p></article>`).join("")}</div>
+    <article class="landgangReserve card"><small>TAGES-TAKTIK</small><strong>${esc(brief.reserve||"Landgänge nur mit ausreichender Zeit- und Wetterreserve einplanen.")}</strong></article>
+    <p class="persistentInfoNote">Die ausführlichen Landgangtexte sind dauerhaft in der App gespeichert und werden auch ohne Internet angezeigt. Öffnungszeiten, konkrete Anlegemöglichkeit und aktuelle Verfügbarkeit bitte am Fahrtag prüfen.</p>`;
+}
+function renderDetailScreens(){renderDetailDayNav("tagesplanDayNav");renderDetailDayNav("landgangDayNav");renderTagesplanDetail();renderLandgangDetail()}
 function renderOverviews(){
-  const all=Object.entries(FSC_ROUTES);
-  landgangOverview.innerHTML=all.map(([k,d])=>`<article class="card"><h3>TAG ${k} · ${esc(d.title)}</h3><ul class="hintList">${(d.landgang||[]).map(x=>`<li>⚓ ${esc(x)}</li>`).join('')}</ul></article>`).join('');
+  renderDetailScreens();
+  const all=Object.keys(FSC_ROUTES).map(k=>[k,getActiveRoute(Number(k))]);
   nightOverview.innerHTML=all.map(([k,d])=>`<article class="card"><h3>TAG ${k}</h3><strong style="color:#0b315b">${esc(d.night)}</strong><p>${esc(d.title)}</p></article>`).join('');
 }
 loadNautical.addEventListener('click',loadNauticalLayer);gpsBtn.addEventListener('click',locateMe);

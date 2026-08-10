@@ -1,4 +1,34 @@
-# Friesland Skipper Cockpit V0.18.3
+# Friesland Skipper Cockpit V0.18.4
+
+## Bunkerliste mit dauerhafter lokaler Speicherung
+
+1. **Neuer Hauptmenüpunkt Bunkern**
+   - Die bereinigte Grundliste ist fest in der App enthalten und vollständig offline verfügbar.
+   - Sie umfasst Dokumente & Kontakte, Navigation & Sicherheit, Elektronik & Strom, Kleidung & Persönliches, Küche & Grill, Baden & Freizeit sowie die Prüfungen bei der Bootsübernahme.
+   - Lebensmittel und Getränke werden bewusst außerhalb der App geplant.
+
+2. **Abhaken und verteilen**
+   - Jeder Eintrag kann einzeln abgehakt werden.
+   - Menge beziehungsweise Hinweis und zuständige Person lassen sich direkt ergänzen.
+   - Fortschrittsanzeige sowie die Filter Alle, Offen und Erledigt erleichtern den Überblick.
+
+3. **Eigene Ergänzungen**
+   - Zusätzliche Einträge können einer vorhandenen Kategorie zugeordnet werden.
+   - Eigene Einträge lassen sich wieder einzeln löschen.
+   - „Liste zurücksetzen“ entfernt Häkchen, Mengen und Zuständigkeiten, lässt eigene Ergänzungen jedoch bestehen.
+
+4. **Speicherung**
+   - Häkchen, Mengen, Zuständigkeiten und eigene Ergänzungen werden nach jeder Änderung automatisch im lokalen Browserspeicher des Geräts gesichert.
+   - Die stabilen Eintrags-IDs sorgen dafür, dass gespeicherte Angaben auch nach einem normalen App-Update wieder den richtigen Grundlisteneinträgen zugeordnet werden.
+   - Die Daten werden nicht zwischen iPad, iPhone und MacBook synchronisiert und können beim Löschen der Websitedaten verloren gehen.
+
+## Bestandsschutz
+
+V0.18.4 ergänzt ausschließlich den Hauptmenüpunkt Bunkern und dessen getrennte Daten- und Speicherlogik. `assets/app.js`, sämtliche Routen- und Informationsdaten, alle Bilder und alle sieben GPX-Dateien bleiben gegenüber V0.18.3 unverändert.
+
+---
+
+## Bisheriger Stand V0.18.3
 
 ## Integrierte Hilfe und Bedienungsanleitung
 

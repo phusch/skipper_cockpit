@@ -1,4 +1,23 @@
-# Friesland Skipper Cockpit V0.17.2
+# Friesland Skipper Cockpit V0.17.3
+
+## Fehlerkorrekturen gegenüber der getesteten V0.17.2
+
+1. **Skipper-Hinweise wieder vollständig lesbar**
+   - Die Anzeige verarbeitet sowohl das ältere dreiteilige Listenformat als auch das neue Objektformat der dauerhaft integrierten Tourinfos.
+   - `undefined` wird nicht mehr anstelle von Status, Überschrift oder Hinweistext ausgegeben.
+
+2. **Kompakte iPhone-Navigation im Querformat**
+   - Die linke Kategorienleiste wird auf Smartphones im Querformat als schmale Symbolleiste oberhalb des Inhalts dargestellt.
+   - Alle acht Kategorien bleiben direkt erreichbar, ohne die Inhaltsfläche seitlich zu verdrängen.
+   - iPad- und Desktop-Darstellung bleiben unverändert.
+
+## Bestandsschutz
+
+Die Korrektur ist additiv. Alle sieben Standard-GPX, `assets/routes-data.js`, die dauerhaft integrierten Tourinfos, Waterkaarten-Alternativen, Wetter-, Karten-, GPS- und Nautikfunktionen bleiben erhalten.
+
+---
+
+## Bisheriger Stand V0.17.2
 
 ## Additive Erweiterung gegenüber der getesteten V0.17.1
 

@@ -1,7 +1,7 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b7285"><title>Friesland Skipper Cockpit V0.17.2</title><meta name="description" content="Friesland Skipper Cockpit – reale GPX-Routen, moderne maritime Cockpit-Oberfläche"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><link rel="stylesheet" href="assets/app.css?v=0.17.2"><style id="v0141-critical">
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b7285"><title>Friesland Skipper Cockpit V0.17.3</title><meta name="description" content="Friesland Skipper Cockpit – reale GPX-Routen, moderne maritime Cockpit-Oberfläche"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><link rel="stylesheet" href="assets/app.css?v=0.17.3"><style id="v0141-critical">
 .topDayBar,.daypicker{display:none!important}
 </style></head>
-<body><div class="shell"><header class="topbar"><div class="brand"><img src="assets/schiffsschraube-gold.gif?v=0.17.2" alt="Goldene Schiffsschraube"><div><h1>FRIESLAND</h1><span>SKIPPER COCKPIT</span></div></div><div class="statusbar"><div class="statusitem headerDayPicker" id="headerDayPicker">
+<body><div class="shell"><header class="topbar"><div class="brand"><img src="assets/schiffsschraube-gold.gif?v=0.17.3" alt="Goldene Schiffsschraube"><div><h1>FRIESLAND</h1><span>SKIPPER COCKPIT</span></div></div><div class="statusbar"><div class="statusitem headerDayPicker" id="headerDayPicker">
   <div class="statusicon">📅</div>
   <button class="headerDayCurrent" id="headerDayCurrent" type="button" aria-label="Fahrtag wählen">
     <small>Fahrtag</small>
@@ -17,12 +17,12 @@
     <button data-header-day="6">Tag 6 <span>Giethoorn</span></button>
     <button data-header-day="7">Tag 7 <span>Sloten</span></button>
   </div>
-</div><div class="statusitem"><div class="statusicon">🌤️</div><div><small>Wetter</small><strong id="topWeather">—</strong></div></div><div class="statusitem"><div class="statusicon">💨</div><div><small>Wind</small><strong id="topWind">—</strong></div></div><div class="statusitem"><div class="statusicon">🕒</div><div><small>Fahrzeit</small><strong id="topTime">—</strong></div></div><div class="statusitem"><div class="statusicon">〰️</div><div><small>Distanz</small><strong id="topKm">—</strong></div></div></div><div class="versionBadge">V0.17.2</div><button class="menuBtn" aria-label="Menü">☰</button></header><div class="topDayBar"><span>FAHRTAG</span><div class="topDayButtons">
+</div><div class="statusitem"><div class="statusicon">🌤️</div><div><small>Wetter</small><strong id="topWeather">—</strong></div></div><div class="statusitem"><div class="statusicon">💨</div><div><small>Wind</small><strong id="topWind">—</strong></div></div><div class="statusitem"><div class="statusicon">🕒</div><div><small>Fahrzeit</small><strong id="topTime">—</strong></div></div><div class="statusitem"><div class="statusicon">〰️</div><div><small>Distanz</small><strong id="topKm">—</strong></div></div></div><div class="versionBadge">V0.17.3</div><button class="menuBtn" aria-label="Menü">☰</button></header><div class="topDayBar"><span>FAHRTAG</span><div class="topDayButtons">
 <button data-top-day="1" class="topDayBtn active">Tag 1</button><button data-top-day="2" class="topDayBtn">Tag 2</button>
 <button data-top-day="3" class="topDayBtn">Tag 3</button><button data-top-day="4" class="topDayBtn">Tag 4</button>
 <button data-top-day="5" class="topDayBtn">Tag 5</button><button data-top-day="6" class="topDayBtn">Tag 6</button>
 <button data-top-day="7" class="topDayBtn">Tag 7</button></div></div>
-<aside class="sidebar"><button class="navbtn active" data-screen="cockpit"><span class="ico">⌂</span>COCKPIT</button><button class="navbtn" data-screen="tagesplan"><span class="ico">▣</span>TAGESPLAN</button><button class="navbtn" data-screen="weather"><span class="ico">🌦️</span>WETTER</button><button class="navbtn" data-screen="waterkaarten"><span class="ico">🗺️</span>WATERKAARTEN</button><button class="navbtn" data-screen="nautik"><span class="ico">🌉</span>NAUTIK</button><button class="navbtn" data-screen="landgang"><span class="ico">⚓</span>LANDGANG</button><button class="navbtn" data-screen="nacht"><span class="ico">🛏️</span>NACHTPLÄTZE</button><button class="navbtn" data-screen="settings"><span class="ico">⚙️</span>EINSTELLUNGEN</button><div class="daypicker"><label for="daySelect">Tag wählen</label><select id="daySelect"><option value="1">Tag 1 · Sneek</option>
+<aside class="sidebar"><button class="navbtn active" data-screen="cockpit" aria-label="Cockpit" title="Cockpit"><span class="ico">⌂</span><span class="navlabel">COCKPIT</span></button><button class="navbtn" data-screen="tagesplan" aria-label="Tagesplan" title="Tagesplan"><span class="ico">▣</span><span class="navlabel">TAGESPLAN</span></button><button class="navbtn" data-screen="weather" aria-label="Wetter" title="Wetter"><span class="ico">🌦️</span><span class="navlabel">WETTER</span></button><button class="navbtn" data-screen="waterkaarten" aria-label="Waterkaarten" title="Waterkaarten"><span class="ico">🗺️</span><span class="navlabel">WATERKAARTEN</span></button><button class="navbtn" data-screen="nautik" aria-label="Nautik" title="Nautik"><span class="ico">🌉</span><span class="navlabel">NAUTIK</span></button><button class="navbtn" data-screen="landgang" aria-label="Landgang" title="Landgang"><span class="ico">⚓</span><span class="navlabel">LANDGANG</span></button><button class="navbtn" data-screen="nacht" aria-label="Nachtplätze" title="Nachtplätze"><span class="ico">🛏️</span><span class="navlabel">NACHTPLÄTZE</span></button><button class="navbtn" data-screen="settings" aria-label="Einstellungen" title="Einstellungen"><span class="ico">⚙️</span><span class="navlabel">EINSTELLUNGEN</span></button><div class="daypicker"><label for="daySelect">Tag wählen</label><select id="daySelect"><option value="1">Tag 1 · Sneek</option>
 <option value="2">Tag 2 · Gaastmaar</option>
 <option value="3">Tag 3 · Workum</option>
 <option value="4">Tag 4 · SN15</option>
@@ -71,7 +71,7 @@
 <section class="screen" id="screen-weather">
   <div class="headrow">
     <div>
-      <div class="kicker">ECHTES WETTER · V0.17.2</div>
+      <div class="kicker">ECHTES WETTER · V0.17.3</div>
       <h2 class="routeTitle">Wetter & Wind</h2>
       <p class="subtitle">Live-Daten für die ausgewählte Tagesroute. Auf Tag 2 zusätzlich IJsselmeer-Fokus.</p>
     </div>
@@ -256,4 +256,4 @@
     </article>
   </div>
 </section></main></div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="assets/routes-data.js?v=0.17.2"></script><script src="assets/tour-info-data.js?v=0.17.2"></script><script src="assets/app.js?v=0.17.2"></script></body></html>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="assets/routes-data.js?v=0.17.3"></script><script src="assets/tour-info-data.js?v=0.17.3"></script><script src="assets/app.js?v=0.17.3"></script></body></html>

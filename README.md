@@ -1,4 +1,24 @@
-# Friesland Skipper Cockpit V0.18.2
+# Friesland Skipper Cockpit V0.18.3
+
+## Integrierte Hilfe und Bedienungsanleitung
+
+1. **Neuer Hauptmenüpunkt Hilfe**
+   - Die Bedienungsanleitung ist direkt in der App erreichbar und vollständig offline verfügbar.
+   - Ein Schnellstart erklärt den täglichen Ablauf von der Fahrtagauswahl bis zur Navigation in Waterkaarten.
+   - Aufklappbare Abschnitte erläutern Cockpit, Tagesplan, Landgang, Nachtplätze, Wetter, Nautik, Karte, GPS, Waterkaarten-Alternativen, Tour-Routeninfos und Schiffsprofil.
+
+2. **Speicherung und Sicherheit verständlich erklärt**
+   - Die Hilfeseite unterscheidet fest eingebaute Inhalte, lokale Browserdaten und Funktionen mit Internetbedarf.
+   - Eine kurze Anleitung beschreibt die Installation auf dem iPad- und iPhone-Home-Bildschirm.
+   - Der sichtbare Sicherheitshinweis stellt klar, dass das Cockpit eine Planungshilfe ist und keine amtliche Navigation ersetzt.
+
+## Bestandsschutz
+
+V0.18.3 ergänzt ausschließlich den Hauptmenüpunkt und die statische Hilfeseite. Sämtliche Funktionen, Daten, Routen, GPX-Dateien und Inhalte der freigegebenen MASTER V0.18.2 bleiben unverändert erhalten.
+
+---
+
+## Bisheriger Stand V0.18.2
 
 ## Orts- und Kartenlinks im Tagesplan
 

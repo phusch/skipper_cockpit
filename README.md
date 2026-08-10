@@ -1,4 +1,30 @@
-# Friesland Skipper Cockpit V0.18.0
+# Friesland Skipper Cockpit V0.18.1
+
+## Nachtplätze mit Fotos und praktischen Informationen
+
+1. **Ausführliche Nachtplatzansicht**
+   - Für alle sieben Fahrtage gibt es eine eigene Nachtplatzkarte mit Charakter, Liegeart, Versorgung, Anlegetaktik und Reserveplan.
+   - Workum, Marchjepolle, Giethoorn und Sloten werden mit echten Ortsfotos gezeigt; die Naturplätze erhalten ein gekennzeichnetes Friesland-Stimmungsfoto.
+   - Direkte Karten- und Quellenlinks erleichtern die Kontrolle am Fahrtag.
+
+2. **Aktueller Informationsstand**
+   - Workum enthält die kommunalen Gebühren und Sanitärzeiten mit Stand 10.08.2026.
+   - Giethoorn enthält die veröffentlichte Saison und die Passantentarife 2026.
+   - SN38A Longschar enthält Liegekantenlänge, Aufenthaltsdauer und die vorhandene beziehungsweise fehlende Infrastruktur.
+   - Naturplätze bleiben ausdrücklich Zielgebiete: Belegung, Beschilderung, Wassertiefe, Windlage und Eignung für Artemis werden vor Ort geprüft.
+
+3. **Dauerhaft und offline**
+   - Texte liegen fest in `assets/night-info-data.js`.
+   - Alle fünf Bilddateien liegen lokal unter `assets/nightplaces/` und benötigen nach der Installation keine Internetverbindung.
+   - Bilder stammen aus Wikimedia Commons und enthalten sichtbare Urheber- und Lizenzhinweise; Details stehen zusätzlich in `IMAGE-LICENSES.md`.
+
+## Bestandsschutz
+
+V0.18.1 ergänzt ausschließlich den Reiter Nachtplätze. Alle Funktionen und Daten der V0.18.0 – einschließlich Tagesplan, Landgang, Wetter, Nautik, Karte, GPX, Waterkaarten-Alternativen, Schiffsprofil, GPS und iPhone-Querformat – bleiben erhalten.
+
+---
+
+## Bisheriger Stand V0.18.0
 
 ## Tagesplan und Landgang ausführlich dargestellt
 

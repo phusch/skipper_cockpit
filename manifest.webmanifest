@@ -5,5 +5,19 @@
   "display": "standalone",
   "background_color": "#f2f8f7",
   "theme_color": "#0b7285",
-  "description": "Friesland Skipper Cockpit 2026 · V0.18.4 mit offline verfügbarer Bunkerliste"
+  "description": "Friesland Skipper Cockpit 2026 · V0.18.5 mit Home-Bildschirmicon",
+  "icons": [
+    {
+      "src": "assets/icons/skippercockpit-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/skippercockpit-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
 }

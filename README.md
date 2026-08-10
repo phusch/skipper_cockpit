@@ -1,4 +1,18 @@
-# Friesland Skipper Cockpit V0.18.4
+# Friesland Skipper Cockpit V0.18.5
+
+## Home-Bildschirmicon für iPad und iPhone
+
+- Das neue SkipperCockpit-Icon ist als Apple-Touch-Icon und in den Web-App-Standardgrößen 192 × 192 und 512 × 512 Pixel eingebunden.
+- Beim Hinzufügen der App zum Home-Bildschirm verwendet iPadOS beziehungsweise iOS das neue Icon.
+- Für eine bereits vorhandene Home-Bildschirmverknüpfung muss das alte Symbol einmal entfernt und die App anschließend über Safari erneut zum Home-Bildschirm hinzugefügt werden.
+
+## Bestandsschutz
+
+V0.18.5 ergänzt ausschließlich die Icondateien und deren Verknüpfung in `index.html` und `manifest.webmanifest`. Sämtliche Funktionen, Daten, Routen, Bilder und GPX-Dateien der V0.18.4 bleiben unverändert erhalten.
+
+---
+
+## Bisheriger Stand V0.18.4
 
 ## Bunkerliste mit dauerhafter lokaler Speicherung
 

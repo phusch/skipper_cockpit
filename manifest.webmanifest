@@ -5,7 +5,7 @@
   "display": "standalone",
   "background_color": "#f2f8f7",
   "theme_color": "#0b7285",
-  "description": "Friesland Skipper Cockpit 2026 · V0.18.5 mit Home-Bildschirmicon",
+  "description": "Friesland Skipper Cockpit 2026 · V0.19.0 mit additivem Runner-Reiter",
   "icons": [
     {
       "src": "assets/icons/skippercockpit-192.png",

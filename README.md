@@ -1,4 +1,30 @@
-# Friesland Skipper Cockpit V0.18.5
+# Friesland Skipper Cockpit V0.19.0
+
+## Runner-Reiter – additive Erweiterung
+
+1. **Eigener Runner-Bereich**
+   - Neuer Hauptmenüpunkt `RUNNER`, ohne Änderung der bestehenden Skipper-Funktionen.
+   - Fahrtage 3, 5 und 6 enthalten die geprüften Runner-Korridore; Tag 1 bleibt bewusst frei.
+   - Tag 3 bietet Standardroute IJlst–Sneek sowie die separate Bolsward-Alternative Workum–Parrega–Tjerkwerd.
+
+2. **Boot und Läufer auf einer Karte**
+   - Türkis zeigt den exakten Wasser-Teilabschnitt aus den vom Nutzer bereitgestellten Waterkaarten-GPX-Dateien.
+   - Grün gestrichelt zeigt die Runner-Fußroute. Sie wird online aus dem aktuellen OpenStreetMap-Wegenetz berechnet.
+   - START und PICKUP werden deutlich markiert. FULL/SHORT kann je nach Strecke gewählt werden.
+
+3. **Synchronisationskontrolle**
+   - Planungsannahme: Artemis und Läufer bewegen sich ungefähr gleich schnell.
+   - Die App vergleicht deshalb Wasser-km und Lauf-km und zeigt die Distanzdifferenz in km und Prozent.
+   - Geroutete Fußwege werden lokal im Browser zwischengespeichert und können anschließend als Runner-GPX gesichert werden.
+
+4. **Bestandsschutz**
+   - Basis ist die am 14.08.2026 erneut aus GitHub gezippte App. Ein Dateivergleich bestätigte, dass ihre Nutzdateien der V0.18.5 entsprechen.
+   - `assets/app.js`, `assets/routes-data.js`, die sieben bestehenden Standard-GPX, Wetter-, Nautik-, Waterkaarten-, Tagesplan-, Landgang-, Nachtplatz-, Bunker- und Speicherlogik wurden funktional nicht verändert.
+   - Neu sind ausschließlich `assets/runner-data.js`, `assets/runner.js`, der zusätzliche Runner-Reiter sowie dessen CSS. Versions-/Cache-Hinweise und README/Manifest wurden auf V0.19.0 aktualisiert.
+
+---
+
+## Bisheriger Stand V0.18.5
 
 ## Home-Bildschirmicon für iPad und iPhone
 

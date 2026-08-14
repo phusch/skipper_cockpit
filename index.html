@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b7285"><title>Friesland Skipper Cockpit V0.18.5</title><meta name="description" content="Friesland Skipper Cockpit – reale GPX-Routen, moderne maritime Cockpit-Oberfläche"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="192x192" href="assets/icons/skippercockpit-192.png"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><link rel="stylesheet" href="assets/app.css?v=0.18.5"><style id="v0141-critical">
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b7285"><title>Friesland Skipper Cockpit V0.19.0</title><meta name="description" content="Friesland Skipper Cockpit – reale GPX-Routen, moderne maritime Cockpit-Oberfläche"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="192x192" href="assets/icons/skippercockpit-192.png"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><link rel="stylesheet" href="assets/app.css?v=0.19.0"><style id="v0141-critical">
 .topDayBar,.daypicker{display:none!important}
 </style></head>
 <body><div class="shell"><header class="topbar"><div class="brand"><img src="assets/schiffsschraube-gold.gif?v=0.18.2" alt="Goldene Schiffsschraube"><div><h1>FRIESLAND</h1><span>SKIPPER COCKPIT</span></div></div><div class="statusbar"><div class="statusitem headerDayPicker" id="headerDayPicker">
@@ -17,12 +17,12 @@
     <button data-header-day="6">Tag 6 <span>Giethoorn</span></button>
     <button data-header-day="7">Tag 7 <span>Sloten</span></button>
   </div>
-</div><div class="statusitem"><div class="statusicon">🌤️</div><div><small>Wetter</small><strong id="topWeather">—</strong></div></div><div class="statusitem"><div class="statusicon">💨</div><div><small>Wind</small><strong id="topWind">—</strong></div></div><div class="statusitem"><div class="statusicon">🕒</div><div><small>Fahrzeit</small><strong id="topTime">—</strong></div></div><div class="statusitem"><div class="statusicon">〰️</div><div><small>Distanz</small><strong id="topKm">—</strong></div></div></div><div class="versionBadge">V0.18.5</div><button class="menuBtn" aria-label="Menü">☰</button></header><div class="topDayBar"><span>FAHRTAG</span><div class="topDayButtons">
+</div><div class="statusitem"><div class="statusicon">🌤️</div><div><small>Wetter</small><strong id="topWeather">—</strong></div></div><div class="statusitem"><div class="statusicon">💨</div><div><small>Wind</small><strong id="topWind">—</strong></div></div><div class="statusitem"><div class="statusicon">🕒</div><div><small>Fahrzeit</small><strong id="topTime">—</strong></div></div><div class="statusitem"><div class="statusicon">〰️</div><div><small>Distanz</small><strong id="topKm">—</strong></div></div></div><div class="versionBadge">V0.19.0</div><button class="menuBtn" aria-label="Menü">☰</button></header><div class="topDayBar"><span>FAHRTAG</span><div class="topDayButtons">
 <button data-top-day="1" class="topDayBtn active">Tag 1</button><button data-top-day="2" class="topDayBtn">Tag 2</button>
 <button data-top-day="3" class="topDayBtn">Tag 3</button><button data-top-day="4" class="topDayBtn">Tag 4</button>
 <button data-top-day="5" class="topDayBtn">Tag 5</button><button data-top-day="6" class="topDayBtn">Tag 6</button>
 <button data-top-day="7" class="topDayBtn">Tag 7</button></div></div>
-<aside class="sidebar"><button class="navbtn active" data-screen="cockpit" aria-label="Cockpit" title="Cockpit"><span class="ico">⌂</span><span class="navlabel">COCKPIT</span></button><button class="navbtn" data-screen="tagesplan" aria-label="Tagesplan" title="Tagesplan"><span class="ico">▣</span><span class="navlabel">TAGESPLAN</span></button><button class="navbtn" data-screen="weather" aria-label="Wetter" title="Wetter"><span class="ico">🌦️</span><span class="navlabel">WETTER</span></button><button class="navbtn" data-screen="waterkaarten" aria-label="Waterkaarten" title="Waterkaarten"><span class="ico">🗺️</span><span class="navlabel">WATERKAARTEN</span></button><button class="navbtn" data-screen="nautik" aria-label="Nautik" title="Nautik"><span class="ico">🌉</span><span class="navlabel">NAUTIK</span></button><button class="navbtn" data-screen="landgang" aria-label="Landgang" title="Landgang"><span class="ico">⚓</span><span class="navlabel">LANDGANG</span></button><button class="navbtn" data-screen="nacht" aria-label="Nachtplätze" title="Nachtplätze"><span class="ico">🛏️</span><span class="navlabel">NACHTPLÄTZE</span></button><button class="navbtn" data-screen="bunkern" aria-label="Bunkern" title="Bunkern"><span class="ico">☑</span><span class="navlabel">BUNKERN</span></button><button class="navbtn" data-screen="help" aria-label="Hilfe" title="Hilfe"><span class="ico">❔</span><span class="navlabel">HILFE</span></button><button class="navbtn" data-screen="settings" aria-label="Einstellungen" title="Einstellungen"><span class="ico">⚙️</span><span class="navlabel">EINSTELLUNGEN</span></button><div class="daypicker"><label for="daySelect">Tag wählen</label><select id="daySelect"><option value="1">Tag 1 · Sneek</option>
+<aside class="sidebar"><button class="navbtn active" data-screen="cockpit" aria-label="Cockpit" title="Cockpit"><span class="ico">⌂</span><span class="navlabel">COCKPIT</span></button><button class="navbtn" data-screen="tagesplan" aria-label="Tagesplan" title="Tagesplan"><span class="ico">▣</span><span class="navlabel">TAGESPLAN</span></button><button class="navbtn" data-screen="runner" aria-label="Runner" title="Runner"><span class="ico">🏃</span><span class="navlabel">RUNNER</span></button><button class="navbtn" data-screen="weather" aria-label="Wetter" title="Wetter"><span class="ico">🌦️</span><span class="navlabel">WETTER</span></button><button class="navbtn" data-screen="waterkaarten" aria-label="Waterkaarten" title="Waterkaarten"><span class="ico">🗺️</span><span class="navlabel">WATERKAARTEN</span></button><button class="navbtn" data-screen="nautik" aria-label="Nautik" title="Nautik"><span class="ico">🌉</span><span class="navlabel">NAUTIK</span></button><button class="navbtn" data-screen="landgang" aria-label="Landgang" title="Landgang"><span class="ico">⚓</span><span class="navlabel">LANDGANG</span></button><button class="navbtn" data-screen="nacht" aria-label="Nachtplätze" title="Nachtplätze"><span class="ico">🛏️</span><span class="navlabel">NACHTPLÄTZE</span></button><button class="navbtn" data-screen="bunkern" aria-label="Bunkern" title="Bunkern"><span class="ico">☑</span><span class="navlabel">BUNKERN</span></button><button class="navbtn" data-screen="help" aria-label="Hilfe" title="Hilfe"><span class="ico">❔</span><span class="navlabel">HILFE</span></button><button class="navbtn" data-screen="settings" aria-label="Einstellungen" title="Einstellungen"><span class="ico">⚙️</span><span class="navlabel">EINSTELLUNGEN</span></button><div class="daypicker"><label for="daySelect">Tag wählen</label><select id="daySelect"><option value="1">Tag 1 · Sneek</option>
 <option value="2">Tag 2 · Gaastmaar</option>
 <option value="3">Tag 3 · Workum</option>
 <option value="4">Tag 4 · SN15</option>
@@ -71,6 +71,29 @@
   <div class="headrow"><div><div class="kicker">TOUR 2026 · DAUERHAFT INTEGRIERT</div><h2 class="routeTitle">Tagesplan</h2><p class="subtitle">Der ausgewählte Fahrtag als ausführlicher Ablauf aus den fest eingebauten Routeninformationen.</p></div><span class="chip aqua">OFFLINE VERFÜGBAR</span></div>
   <div class="detailDayNav" id="tagesplanDayNav" aria-label="Fahrtag für Tagesplan wählen"></div>
   <div id="tagesplanDetail" class="dayPlanDetail"></div>
+</section>
+
+<section class="screen" id="screen-runner">
+  <div class="headrow runnerHead"><div><div class="kicker">RUNNER TRANSFER · ARTEMIS ≈ LAUFTEMPO</div><h2 class="routeTitle">Runner</h2><p class="subtitle">Parallel zur Tagesroute laufen, während Artemis zum vereinbarten Pickup weiterfährt.</p></div><span class="chip aqua">ADDITIVER RUNNER-MODUS</span></div>
+  <div class="detailDayNav runnerDayNav" id="runnerDayNav" aria-label="Fahrtag für Runner wählen"></div>
+  <section class="runnerEmpty card" id="runnerEmpty" hidden><h3 id="runnerEmptyTitle">Kein Runner-Transfer</h3><p id="runnerEmptyText"></p></section>
+  <div id="runnerWorkspace" hidden>
+    <div class="runnerRouteChoices" id="runnerRouteChoices"></div>
+    <section class="runnerHero card">
+      <div><small>AKTIVE RUNNER-STRECKE</small><h3 id="runnerVariantTitle">—</h3><p><span id="runnerContext">—</span> · <span id="runnerAssumption">—</span></p></div>
+      <div class="runnerVariantButtons" id="runnerVariantButtons"></div>
+    </section>
+    <div class="runnerMetrics">
+      <article><small>ARTEMIS</small><strong id="runnerWaterKm">—</strong><span>Wasserweg Start → Pickup</span></article>
+      <article><small>RUNNER</small><strong id="runnerRunKm">—</strong><span>gerouteter Fußweg</span></article>
+      <article><small>DIFFERENZ</small><strong id="runnerDelta" class="runnerSyncValue">—</strong><span>ideal möglichst nahe 0 %</span></article>
+    </div>
+    <section class="runnerTransfer card"><div><small>🏃 RUN START</small><strong id="runnerStartName">—</strong></div><div class="runnerArrow">→</div><div><small>🏁 PICKUP</small><strong id="runnerPickupName">—</strong></div></section>
+    <div class="runnerMapCard"><div class="runnerLegend"><span><i class="boat"></i> Artemis</span><span><i class="run"></i> Runner</span><span>🏃 Start</span><span>🏁 Pickup</span></div><div id="runnerMap" class="runnerMap"></div><div class="runnerMapFoot">Online-Kartenbasis © OpenStreetMap · Fußroute wird über aktuelles OSM-Wegenetz berechnet und lokal zwischengespeichert.</div></div>
+    <div class="runnerActions"><button type="button" class="action primary" id="runnerLoad">↻ FUẞROUTE LADEN</button><button type="button" class="action" id="runnerLocate">◎ MEINE POSITION</button><button type="button" class="action" id="runnerGpx" disabled>⇩ RUNNER-GPX</button><a class="action" id="runnerGoogle" href="#" target="_blank" rel="noopener">↗ GOOGLE MAPS</a></div>
+    <div class="runnerStatus" id="runnerRouteStatus">Runner wird vorbereitet …</div>
+    <div class="runnerInfoGrid"><article class="card"><h3>Hinweise</h3><ul id="runnerNotes"></ul></article><article class="card"><h3>Quellen / Kontrolle</h3><div class="runnerSources" id="runnerSources"></div><p class="mutedNote">Die Runner-Funktion ergänzt das Cockpit. Sie verändert keine Skipper-, GPX-, Wetter-, Nautik- oder Speicherfunktion. Vor Ort entscheiden Skipper und Läufer über sicheren Ausstieg, Weg und Pickup.</p></article></div>
+  </div>
 </section>
 <section class="screen" id="screen-weather">
   <div class="headrow">
@@ -229,7 +252,7 @@
       <h2 class="routeTitle">Hilfe &amp; Anleitung</h2>
       <p class="subtitle">Die wichtigsten Funktionen des Friesland Skipper Cockpits – kurz erklärt für iPad, iPhone und MacBook.</p>
     </div>
-    <span class="chip aqua">V0.18.5</span>
+    <span class="chip aqua">V0.19.0</span>
   </div>
 
   <section class="helpQuick card" aria-labelledby="helpQuickTitle">
@@ -340,4 +363,4 @@
     </article>
   </div>
 </section></main></div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="assets/routes-data.js?v=0.18.5"></script><script src="assets/tour-info-data.js?v=0.18.5"></script><script src="assets/night-info-data.js?v=0.18.5"></script><script src="assets/day-place-links.js?v=0.18.5"></script><script src="assets/bunkering-data.js?v=0.18.5"></script><script src="assets/app.js?v=0.18.5"></script><script src="assets/bunkering.js?v=0.18.5"></script></body></html>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="assets/routes-data.js?v=0.19.0"></script><script src="assets/tour-info-data.js?v=0.19.0"></script><script src="assets/night-info-data.js?v=0.19.0"></script><script src="assets/day-place-links.js?v=0.19.0"></script><script src="assets/bunkering-data.js?v=0.19.0"></script><script src="assets/app.js?v=0.19.0"></script><script src="assets/bunkering.js?v=0.19.0"></script><script src="assets/runner-data.js?v=0.19.0"></script><script src="assets/runner.js?v=0.19.0"></script></body></html>

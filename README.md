@@ -332,3 +332,7 @@ Fehlerkorrektur auf Basis V0.14, weiterhin additiv zum Master V0.13.2.
 ## Unverändert
 Alle Funktionen, Inhalte, sieben Original-GPX, Karten, GPS, Nautik, Schiffsprofil,
 Skipperbrief, Landgang, Nachtplätze und das Layout des Masters V0.13.2 bleiben erhalten.
+
+
+## V0.19.1 – iPhone Hochformat
+Reiner Darstellungs-Fix für iPhone im Hochformat: kompakter Header und zweizeilige, horizontal wischbare Navigation. Skipper- und Runner-Funktionalität unverändert.

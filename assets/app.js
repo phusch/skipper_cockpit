@@ -453,6 +453,12 @@ function renderLandgangDetail(){
     <article class="landgangReserve card"><small>TAGES-TAKTIK</small><strong>${esc(brief.reserve||"Landgänge nur mit ausreichender Zeit- und Wetterreserve einplanen.")}</strong></article>
     <p class="persistentInfoNote">Die ausführlichen Landgangtexte sind dauerhaft in der App gespeichert und werden auch ohne Internet angezeigt. Öffnungszeiten, konkrete Anlegemöglichkeit und aktuelle Verfügbarkeit bitte am Fahrtag prüfen.</p>`;
 }
+function renderBerthPlanner(day){
+  const cfg=window.FSC_BERTH_PLANS||{},plans=cfg.days?.[String(day)]||[],lang=cfg.language||{};
+  if(!plans.length)return "";
+  const cards=plans.map(p=>`<article class="berthPlanCard"><div class="berthPlanHead"><small>${esc(p.label||"ALTERNATIVE")}</small><span>${esc(p.type||"")}</span></div><h4>${esc(p.name||"")}</h4><p>${esc(p.note||"")}</p><div class="berthPlanActions">${p.phone?`<a class="action primary" href="tel:${esc(p.phone)}">📞 ${esc(p.displayPhone||p.phone)}</a>`:""}${p.map?`<a class="action" href="${esc(p.map)}" target="_blank" rel="noopener">📍 KARTE</a>`:""}</div></article>`).join("");
+  return `<section class="berthPlanner"><div class="berthPlannerHead"><div><small>⚓ LIEGEPLATZ HEUTE</small><h3>Plan A · Alternativen · Hafenmeister</h3></div><span>Artemis · 12,30 × 3,85 m · Tiefgang 1,15 m</span></div><div class="berthPlanGrid">${cards}</div><details class="berthPhrase"><summary>💬 Was sage ich? · Deutsch / Englisch</summary><div class="berthPhraseGrid"><article><small>DEUTSCH</small><p>${esc(lang.de||"")}</p><strong>${esc(lang.deFollow||"")}</strong></article><article><small>ENGLISH</small><p>${esc(lang.en||"")}</p><strong>${esc(lang.enFollow||"")}</strong></article></div></details></section>`;
+}
 function renderNightDetail(){
   const target=document.getElementById("nightOverview");if(!target)return;
   const d=getActiveRoute(currentDay),n=window.FSC_NIGHT_INFO?.entries?.[String(currentDay)];
@@ -467,6 +473,7 @@ function renderNightDetail(){
       <article class="card nightTips"><small>VOR DEM FESTMACHEN</small><h3>Das ist heute wichtig</h3><ul>${(n.tips||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></article>
       <article class="card nightReserve"><small>RESERVE / PLAN B</small><h3>Nicht auf den Wunschplatz versteifen</h3><p>${esc(n.reserve)}</p></article>
     </div>
+    ${renderBerthPlanner(currentDay)}
     <div class="nightActions"><a class="action primary" href="${esc(n.map)}" target="_blank" rel="noopener">📍 AUF KARTE ÖFFNEN</a><a class="action aqua" href="${esc(n.source)}" target="_blank" rel="noopener">↗ AKTUELLE QUELLE</a><span>Informationsstand 10.08.2026 · ${esc(n.sourceLabel)}</span></div>
     <p class="persistentInfoNote">Texte und Fotos sind dauerhaft in der App gespeichert und offline sichtbar. Freie Plätze, lokale Beschilderung, Wassertiefe, Windlage, Preise und die konkrete Eignung für Artemis bitte am Fahrtag in Waterkaarten beziehungsweise vor Ort prüfen.</p>`;
 }
